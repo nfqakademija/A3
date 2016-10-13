@@ -1,4 +1,7 @@
 eLearn
 ======
 
-A Symfony project created on October 13, 2016, 9:46 pm.
+Initial version of eLearning platform.
+
+----
+Please add your comments and suggestions below.
