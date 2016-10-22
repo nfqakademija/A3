@@ -1,7 +1,7 @@
-eLearn
+NFQ AKADEMIJOS 5 GRUPĖS "A3" PROJEKTAS
 ======
-
-Initial version of eLearning platform.
-
-----
-Please add your comments and suggestions below.
+## Komandos nariai:
+* Anastasija Andrejeva
+* Antanas Gečas
+* Andrius Skučas
+* Mentorius: Linas Linartas
