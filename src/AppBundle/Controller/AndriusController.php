@@ -11,15 +11,15 @@ class AndriusController extends Controller
     /**
      * @Route("/andrius", name="andrius")
      */
-    public function indexAction(Request $request)
+    public function andriusAction(Request $request)
     {
         return $this->render('andrius/index.html.twig', [
             'title' => 'Andriaus puslapis',
-            'andrius_itmes' => array(
+            'andrius_itmes' => [
                 'Mėgsta ilgai miegoti',
                 'Mėgsta pusryčius',
                 'Galbūt moka programuoti'
-            ),
+            ],
         ]);
     }
 }
