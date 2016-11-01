@@ -13,8 +13,8 @@ class AntanasController extends Controller
      */
     public function newAction()
     {
-        return $this->render('antanas/index.html.twig', array(
-        'tekstas' => 'Cia Antano puslapis'
-        ));
+        return $this->render('antanas/index.html.twig', [
+            'tekstas' => 'Cia Antano puslapis'
+        ]);
     }
 }
