@@ -1,0 +1,30 @@
+{
+  "name": "pries_ar_po",
+  "version": "1.0.0",
+  "description": "A3 komandos projektas 'Prieš ar po'.",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:nfqakademija/A3.git"
+  },
+  "keywords": [
+
+  ],
+  "author": "A3 komanda",
+  "license": "",
+  "homepage": "http://a3.projektai.nfqakademija.lt",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.1",
+    "gulp-clean-css": "^2.0.13",
+    "gulp-concat": "^2.6.0",
+    "gulp-minify": "0.0.14",
+    "gulp-plumber": "^1.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.3.2",
+    "gulp-sourcemaps": "^2.2.0"
+  }
+}
