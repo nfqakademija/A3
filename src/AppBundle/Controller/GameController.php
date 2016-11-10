@@ -15,7 +15,7 @@ class GameController extends Controller
     public function initGameAction()
             {
 
-                $count = $this
+                $count = $this;
 
 
                 $fact = $this->getDoctrine()
