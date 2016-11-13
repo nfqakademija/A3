@@ -2,6 +2,9 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\AppBundle;
+use AppBundle\Entity\Fact;
+
 /**
  * FactRepository
  *
@@ -10,4 +13,18 @@ namespace AppBundle\Repository;
  */
 class FactRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findFactsForGame()
+    {
+        $em=$this->getEntityManager();
+        $qb = $em->createQueryBuilder();
+        $query = $qb->select("u")
+            ->from('AppBundle:Fact', 'u')
+            ->orderBy('u.year', 'ASC')
+            ->addOrderBy('u.month', 'ASC')
+            ->addOrderBy('u.day', 'ASC')
+            ->getQuery();
+
+return $result = $query->getResult();
+    }
+
 }
