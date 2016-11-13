@@ -1,45 +1,64 @@
 {% extends 'base.html.twig' %}
 
 {% block main_block_inner %}
-    <div class="screen screen--start">
-        <a href="" class="logo"><img src="" alt=""></a>
-        <a href="" class="btn btn--start-game">Pradėti</a>
-    </div>
+    <div class="main-wrapper">
+        <header>
+            Headeris
+        </header>
 
-    <div class="screen screen--game">
-        <div class="game-status">
-            <div class="timer"></div>
-            <div class="question-count"></div>
-        </div>
-        <div class="main-fact">
-
-        </div>
-        <div class="bottom-erapper">
-            <div class="socondary-fact">
-
+        <div class="screen screen--start">
+            <a href="" class="logo"><img src="{{ asset('assets/img/logo.png') }}" alt=""></a>
+            <div class="rules">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi corporis delectus
+                deserunt, eligendi enim eos eum facere inventore ipsum magnam nulla numquam quasi qui rem suscipit
+                velit.
+                Debitis, dolorum.
             </div>
-            <div class="bottom-buttons">
-                <a href="" class="btn btn--before">Anksčiau</a>
-                <a href="" class="btn btn--after">Vėliau</a>
+            <div class="bottom-wrapper">
+                <a href="" class="btn btn--start-game">Pradėti</a>
             </div>
         </div>
-    </div>
 
-    <div class="screen screen--end">
-        <h2>The game is finished</h2>
-        <div class="game-end-text">
-            Per
-            <span class="time-holder"></span> sekundziu atsakete
-            <span class="answers-holder"></span> klausimu.
+        <div class="screen screen--game">
+            <div class="game-status">
+                <div class="timer">30s</div>
+                <div class="question-count">2 / 20</div>
+            </div>
+            <div class="main-fact">
+                Zalgirio musis
+            </div>
+            <div class="description">ivyko anksciau ar veliau negu</div>
+            <div class="bottom-wrapper">
+                <div class="socondary-fact">
+                    Punios musis
+                </div>
+                <div class="bottom-buttons">
+                    <a href="" class="btn btn--before">Anksčiau</a>
+                    <a href="" class="btn btn--after">Vėliau</a>
+                </div>
+            </div>
         </div>
-        <div class="results-holder">
-            <ul class="results">
 
-            </ul>
+        <div class="screen screen--end">
+            <h2>The game is finished</h2>
+            <div class="game-end-text">
+                Per
+                <span class="time-holder"></span> sekundziu atsakete
+                <span class="answers-holder"></span> klausimu.
+            </div>
+            <div class="bottom-wrapper">
+                <div class="results-holder">
+                    <ul class="results">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="loader">
+            <div class="loader-elem"></div>
         </div>
     </div>
-
     <div class="modal modal--full-details">
 
     </div>
+
 {% endblock %}

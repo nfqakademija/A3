@@ -1,8 +1,7 @@
 /**
  * Main game class
  **/
-var Game = function(gameContainer)
-{
+var Game = function (gameContainer) {
     this.API = new API();
 
     // Facts array
@@ -46,30 +45,26 @@ var Game = function(gameContainer)
 
     // Init click events
     // Start game event
-    this.$startBtn.on('click',function(e)
-    {
+    this.$startBtn.on('click', function (e) {
         e.preventDefault();
         // Init game with game type 1
         that.initGame(1);
     });
 
-    this.$beforeBtn.on('click',function(e)
-    {
+    this.$beforeBtn.on('click', function (e) {
         e.preventDefault();
         // True - fact was before main fact
         that.checkAnswer(true);
     });
 
-    this.$afterBtn.on('click',function(e)
-    {
+    this.$afterBtn.on('click', function (e) {
         e.preventDefault();
         // False - fact was after main fact
         that.checkAnswer(false);
     });
 };
 
-Game.prototype.initGame = function(gameType)
-{
+Game.prototype.initGame = function (gameType) {
     var that = this;
     // Display loader
     this.showLoader();
@@ -88,14 +83,13 @@ Game.prototype.initGame = function(gameType)
     that.showNextQuestion();
     that.$startScreen.fadeOut();
     that.$gameScreen.fadeIn();
-    this.maxTime = 5;
+    this.maxTime = 50;
     that.initTimer();
 
 
     // Get game facts
 
-    this.API.loadGameData(gameType).done(function(data)
-    {
+    this.API.loadGameData(gameType).done(function (data) {
         // Parse data
         // Set main fact
         that.mainFact = data.mainFact;
@@ -114,60 +108,53 @@ Game.prototype.initGame = function(gameType)
 
         that.hideLoader();
 
-    }).fail(function(response){
+    }).fail(function (response) {
         // Display error
-        console.error('Could not load game data. '+response.status+' '+response.statusText);
+        that.hideLoader();
+        console.error('Could not load game data. ' + response.status + ' ' + response.statusText);
     });
 
 };
 
-Game.prototype.initTimer = function()
-{
+Game.prototype.initTimer = function () {
     var that = this;
     this.timeLeft = this.maxTime;
-    this.$gameTimer.text(this.timeLeft+' s');
-    this.timer = setInterval(function(){
+    this.$gameTimer.text(this.timeLeft + ' s');
+    this.timer = setInterval(function () {
         that.checkTime();
     }, 1000);
 };
 
-Game.prototype.checkTime = function()
-{
+Game.prototype.checkTime = function () {
     this.timeLeft--;
-    if(this.timeLeft <= 0 )
-    {
+    if (this.timeLeft <= 0) {
         this.endGame();
     }
 
-    this.$gameTimer.text(this.timeLeft+' s');
+    this.$gameTimer.text(this.timeLeft + ' s');
 
     // Check if time is running out. If yes add allert class.
-    if(this.timeLeft < 10 && !this.$gameTimer.hasClass('allert'))
-    {
+    if (this.timeLeft < 10 && !this.$gameTimer.hasClass('allert')) {
         this.$gameTimer.addClass('allert');
     }
 
 };
 
-Game.prototype.showLoader = function()
-{
-
+Game.prototype.showLoader = function () {
+    $('.loader').fadeIn();
 };
 
-Game.prototype.hideLoader = function()
-{
-
+Game.prototype.hideLoader = function () {
+    $('.loader').fadeOut();
 };
 
-Game.prototype.showNextQuestion = function()
-{
-    if(this.qestionIndex < this.factsCount)
-    {
+Game.prototype.showNextQuestion = function () {
+    if (this.qestionIndex < this.factsCount) {
         // Display new question
         this.$gameSecondaryFact.text(this.facts[this.qestionIndex].name);
-        this.$gameQuestionCount.text((this.qestionIndex+1)+'/'+this.factsCount);
+        this.$gameQuestionCount.text((this.qestionIndex + 1) + '/' + this.factsCount);
 
-    }else{
+    } else {
         this.endGame();
     }
 };
@@ -175,15 +162,13 @@ Game.prototype.showNextQuestion = function()
 /**
  * Checks if answer is wright or wrong
  */
-Game.prototype.checkAnswer = function(answer)
-{
+Game.prototype.checkAnswer = function (answer) {
     this.facts[this.qestionIndex].answer_was_right = answer == this.facts[this.qestionIndex].was_before;
     this.qestionIndex++;
     this.showNextQuestion();
 };
 
-Game.prototype.endGame = function()
-{
+Game.prototype.endGame = function () {
     // Display end game screen
     // Get full details
     // Display results
@@ -192,19 +177,17 @@ Game.prototype.endGame = function()
     clearInterval(this.timer);
     var goodAnswersCount = 0;
 
-    $.each(that.facts,function(i,fact)
-    {
+    $.each(that.facts, function (i, fact) {
         var $resultLine = $('<li class="results--item"></li>');
         $resultLine.text(fact.name);
-        if(fact.answer_was_right)
-        {
+        if (fact.answer_was_right) {
             goodAnswersCount++;
-        }else{
+        } else {
             // Show that the answer was wrong
             $resultLine.addClass('wrong').append('<span>Wrong</span>');
         }
-        var $moreBtn = $('<a href="#" class="btn btn--more-details" data-fact_id="'+fact.id+'">Skaityti daugiau</a>');
-        $moreBtn.on('click',function(e){
+        var $moreBtn = $('<a href="#" class="btn btn--more-details" data-fact_id="' + fact.id + '">Skaityti daugiau</a>');
+        $moreBtn.on('click', function (e) {
             e.preventDefault();
             that.showDetails($(this));
         });
@@ -220,21 +203,17 @@ Game.prototype.endGame = function()
     that.$endGameScreen.fadeIn();
 };
 
-Game.prototype.showDetails = function($button)
-{
+Game.prototype.showDetails = function ($button) {
     var factId = $button.data('fact_id');
     console.log(factId);
-    this.API.loadFactsDetailsDataById(factId).done(function(data)
-    {
+    this.API.loadFactsDetailsDataById(factId).done(function (data) {
 
 
-    }).fail(function(response)
-    {
-        console.error('Could not load full details data. '+response.status+' '+response.statusText);
+    }).fail(function (response) {
+        console.error('Could not load full details data. ' + response.status + ' ' + response.statusText);
     });
 };
 
-Game.prototype.resetGame = function()
-{
+Game.prototype.resetGame = function () {
     // Reset game and get back to main screen
 };
