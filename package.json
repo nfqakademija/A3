@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "A3 komandos projektas 'Prieš ar po'.",
   "main": "gulpfile.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git@github.com:nfqakademija/A3.git"
