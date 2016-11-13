@@ -3,7 +3,8 @@
  **/
 var Game = function(gameContainer)
 {
-    var that = this;
+    this.API = new API();
+
     // Facts array
     this.facts = [];
     this.factsCount = 0;
@@ -40,6 +41,7 @@ var Game = function(gameContainer)
     this.$endGameAnswers = $('.answers-holder');
     this.$endGameResults = $('.results');
 
+    var that = this;
 
 
     // Init click events
@@ -89,13 +91,10 @@ Game.prototype.initGame = function(gameType)
     this.maxTime = 5;
     that.initTimer();
 
-    var url = '';
-
-    url += '/'+gameType;
 
     // Get game facts
-    /*
-    $.get(url).done(function(data)
+
+    this.API.loadGameData(gameType).done(function(data)
     {
         // Parse data
         // Set main fact
@@ -119,7 +118,7 @@ Game.prototype.initGame = function(gameType)
         // Display error
         console.error('Could not load game data. '+response.status+' '+response.statusText);
     });
-    */
+
 };
 
 Game.prototype.initTimer = function()
@@ -191,33 +190,51 @@ Game.prototype.endGame = function()
 
     var that = this;
     clearInterval(this.timer);
-    var url = '';
-
     var goodAnswersCount = 0;
-
 
     $.each(that.facts,function(i,fact)
     {
-        var $resultLine = $('<li></li>');
+        var $resultLine = $('<li class="results--item"></li>');
         $resultLine.text(fact.name);
         if(fact.answer_was_right)
         {
             goodAnswersCount++;
         }else{
+            // Show that the answer was wrong
             $resultLine.addClass('wrong').append('<span>Wrong</span>');
         }
+        var $moreBtn = $('<a href="#" class="btn btn--more-details" data-fact_id="'+fact.id+'">Skaityti daugiau</a>');
+        $moreBtn.on('click',function(e){
+            e.preventDefault();
+            that.showDetails($(this));
+        });
+        $resultLine.append($moreBtn);
+
         that.$endGameResults.append($resultLine);
     });
 
     this.$endGameTime.text(this.maxTime - this.timeLeft);
     this.$endGameAnswers.text(goodAnswersCount);
 
-    $.get(url).done(function(data)
+    that.$gameScreen.fadeOut();
+    that.$endGameScreen.fadeIn();
+};
+
+Game.prototype.showDetails = function($button)
+{
+    var factId = $button.data('fact_id');
+    console.log(factId);
+    this.API.loadFactsDetailsDataById(factId).done(function(data)
     {
-        that.$gameScreen.fadeOut();
-        that.$endGameScreen.fadeIn();
+
+
     }).fail(function(response)
     {
         console.error('Could not load full details data. '+response.status+' '+response.statusText);
     });
+};
+
+Game.prototype.resetGame = function()
+{
+    // Reset game and get back to main screen
 };

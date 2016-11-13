@@ -3,14 +3,14 @@ var API = function()
     this.baseUrl = '';
 };
 
-API.prototype.loadGameData = function()
+API.prototype.loadGameData = function(gameType)
 {
     var url = this.baseUrl+'/loadgamedata';
     return $.get(url);
 };
 
-API.prototype.loadFactsDetailsData = function()
+API.prototype.loadFactsDetailsDataById = function(factId)
 {
-    var url = this.baseUrl+'/loadgamedata';
-    return $.get(url);
+    var url = this.baseUrl+'/loadgamedata/'+factId;
+    return $.get('');
 };
