@@ -41,6 +41,7 @@ gulp.task('js', function() {
     return gulp.src([
 
         // Grab all js scripts
+        './node_modules/jquery/dist/jquery.js',
         './app/Resources/js/**/*.js'
     ])
         .pipe(sourcemaps.init())
