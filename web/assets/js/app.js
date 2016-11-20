@@ -10272,7 +10272,7 @@ var Game = function (gameContainer) {
     this.$fullDetailsScreen = $('.modal--full-details');
 
     // Game objects
-    this.$gameTimer = $('.timer');
+    this.$gameTimer = $('.timer-content');
     this.$gameQuestionCount = $('.question-count');
     this.$gameMainFact = $('.main-fact');
     this.$gameSecondaryFact = $('.socondary-fact');

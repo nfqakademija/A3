@@ -183,6 +183,7 @@ header {
 * Css for game window
 **/
 .game-status {
+  margin: 6px 20px;
   border-bottom: solid 1px #111111; }
   .game-status:after {
     display: block;
@@ -190,16 +191,48 @@ header {
     clear: both; }
 
 .timer {
+  vertical-align: middle;
+  height: 32px;
+  line-height: 32px;
   float: left; }
   .timer.allert {
     color: #fe1111; }
+
+.time-icon {
+  display: inline-block;
+  height: 30px;
+  width: 30px;
+  border: solid 1px #333333;
+  border-radius: 20px;
+  margin-right: 10px;
+  position: relative; }
+  .time-icon:before {
+    display: block;
+    content: '';
+    height: 10px;
+    width: 1px;
+    background: #333333;
+    transform: translateX(14px) translateY(5px); }
+  .time-icon:after {
+    position: absolute;
+    top: 0;
+    display: block;
+    content: '';
+    height: 1px;
+    width: 6px;
+    background: #333333;
+    transform: translateX(15px) translateY(14px); }
+
+.timer-content {
+  display: inline-block;
+  vertical-align: middle; }
 
 .question-count {
   float: right; }
 
 .timer, .question-count {
   display: inline-block;
-  font-size: 40px;
+  font-size: 30px;
   font-weight: 300; }
 
 .main-fact {
