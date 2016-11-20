@@ -10261,7 +10261,7 @@ var Game = function (gameContainer) {
 
     // Buttons
     this.$startBtn = $('.btn--start-game');
-    this.$startBtn = $('.back-arrow');
+    this.$backBtn = $('.back-arrow');
     this.$beforeBtn = $('.btn--before');
     this.$afterBtn = $('.btn--after');
 
@@ -10351,7 +10351,7 @@ Game.prototype.initGame = function (gameType) {
 
         that.$startScreen.fadeOut();
         that.$gameScreen.fadeIn();
-        that.maxTime = 50
+        that.maxTime = 590;
         that.initTimer();
 
         that.hideLoader();
