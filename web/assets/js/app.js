@@ -10308,7 +10308,7 @@ var Game = function (gameContainer) {
 Game.prototype.initGame = function (gameType) {
     var that = this;
     // Display loader
-    this.showLoader();
+    this.showLoader('Ruošiamas žaidimas. Prašome palaukti.');
 
     // Reset questions index
     this.qestionIndex = 0;
@@ -10381,7 +10381,8 @@ Game.prototype.checkTime = function () {
 
 };
 
-Game.prototype.showLoader = function () {
+Game.prototype.showLoader = function (loader_text) {
+    $('.loader-text').text(loader_text);
     $('.loader').fadeIn();
 };
 
