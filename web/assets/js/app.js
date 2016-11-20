@@ -10221,12 +10221,12 @@ return jQuery;
 
 var API = function()
 {
-    this.baseUrl = '';
+    this.baseUrl = 'http://10.10.10.10:8000';
 };
 
 API.prototype.loadGameData = function(gameType)
 {
-    var url = this.baseUrl+'/loadgamedata';
+    var url = this.baseUrl+'/game/init';
     return $.get(url);
 };
 
@@ -10315,7 +10315,7 @@ Game.prototype.initGame = function (gameType) {
 
 
     // Load stubs data
-    var allStubs = new Stubs();
+   /* var allStubs = new Stubs();
     this.mainFact = allStubs.getMainFact();
     this.facts = allStubs.getAllFacts();
 
@@ -10325,7 +10325,7 @@ Game.prototype.initGame = function (gameType) {
     that.$startScreen.fadeOut();
     that.$gameScreen.fadeIn();
     this.maxTime = 50;
-    that.initTimer();
+    that.initTimer();*/
 
 
     // Get game facts
@@ -10333,9 +10333,9 @@ Game.prototype.initGame = function (gameType) {
     this.API.loadGameData(gameType).done(function (data) {
         // Parse data
         // Set main fact
-        that.mainFact = data.mainFact;
+        that.mainFact = data.root;
         // Set questions array
-        that.facts = data.facts;
+        that.facts = data.questions;
         that.factsCount = that.facts.length;
 
         that.$gameMainFact.text(that.mainFact.name);
@@ -10344,8 +10344,8 @@ Game.prototype.initGame = function (gameType) {
 
         that.$startScreen.fadeOut();
         that.$gameScreen.fadeIn();
-
-        that.initTimer(30);
+        that.maxTime = 50
+        that.initTimer();
 
         that.hideLoader();
 
@@ -10404,7 +10404,7 @@ Game.prototype.showNextQuestion = function () {
  * Checks if answer is wright or wrong
  */
 Game.prototype.checkAnswer = function (answer) {
-    this.facts[this.qestionIndex].answer_was_right = answer == this.facts[this.qestionIndex].was_before;
+    this.facts[this.qestionIndex].answer_was_right = answer == this.facts[this.qestionIndex].is_before;
     this.qestionIndex++;
     this.showNextQuestion();
 };
