@@ -1,0 +1,15 @@
+.results {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: #EDE9E0;
+
+  li {
+    list-style: none;
+    border-bottom: solid 1px #BEBAB3;
+  }
+}
+
+.screen--end, .screen--game {
+  display: none;
+}

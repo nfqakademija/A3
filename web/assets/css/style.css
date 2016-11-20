@@ -1,3 +1,12 @@
+/**
+* Main variables and parameters
+**/
+/**
+* Variables for colors and dimensions used in the layout
+**/
+/**
+* Common css rules
+**/
 /**********
 * Main stylesheet
 **********/
@@ -15,7 +24,7 @@ body {
 
 #main-block {
   width: 100%;
-  max-width: 800px;
+  max-width: 700px;
   margin: 0 auto;
   position: relative;
   height: 100%; }
@@ -57,7 +66,7 @@ body {
     content: '';
     width: 20px;
     height: 20px;
-    background: #654987;
+    background: #445D73;
     position: absolute;
     top: 20px;
     left: 20px;
@@ -68,17 +77,6 @@ body {
     transform: rotate(0deg); }
   100% {
     transform: rotate(359deg); } }
-
-.btn {
-  display: inline-block;
-  text-decoration: none;
-  font-size: 41px;
-  background: #01AF98;
-  border-radius: 3px;
-  color: #DDDDDD;
-  font-weight: 300;
-  text-transform: uppercase;
-  padding: 12px 20px; }
 
 .bottom-wrapper {
   background: #445D73;
@@ -102,11 +100,26 @@ body {
     margin-left: -16px; }
 
 header {
-  height: 70px;
+  height: 50px;
   background: #445D73; }
 
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  font-size: 21px;
+  background: #01AF98;
+  border-radius: 3px;
+  color: #DDDDDD;
+  font-weight: 300;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  transition: all .2s; }
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 12px 18px -9px rgba(0, 0, 0, 0.26); }
+
 /**
-* Screens
+* Css for game intro wondow
 **/
 .screen--start {
   text-align: center; }
@@ -115,6 +128,9 @@ header {
   margin-top: 30px;
   padding: 20px 100px; }
 
+/**
+* Css for game window
+**/
 .game-status {
   border-bottom: solid 1px #111111; }
   .game-status:after {
@@ -173,6 +189,9 @@ header {
   content: '';
   clear: both; }
 
+/**
+* Css for and game screen
+**/
 .results {
   margin: 0;
   padding: 0;

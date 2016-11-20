@@ -1,0 +1,73 @@
+.screen--game {
+
+}
+
+.game-status {
+  border-bottom: solid 1px #111111;
+  &:after {
+    display: block;
+    content: '';
+    clear: both;
+  }
+}
+
+.timer {
+  float: left;
+  &.allert {
+    color: #fe1111;
+  }
+}
+
+.question-count {
+  float: right;
+}
+
+.timer, .question-count {
+  display: inline-block;
+  font-size: 40px;
+  font-weight: 300;
+}
+
+.main-fact {
+  font-size: 60px;
+  font-weight: bold;
+  color: #01AF98;
+  text-align: center;
+}
+
+.description {
+  font-style: italic;
+  color: #212121;
+  text-align: center;
+}
+
+.socondary-fact {
+  width: 100%;
+  font-size: 77px;
+  color: #EDE9E0;
+  border: solid 1px rgba(#DDDDDD, 0.2);
+  height: 160px;
+  display: flex;
+  align-content: center;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 300;
+  margin-bottom: 30px;
+}
+
+.btn--before, .btn--after {
+  width: 48%;
+  text-align: center;
+}
+
+.btn--after {
+  float: right;
+}
+
+.bottom-buttons {
+  &:after {
+    display: block;
+    content: '';
+    clear: both;
+  }
+}
