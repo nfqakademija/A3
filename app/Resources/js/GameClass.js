@@ -20,6 +20,7 @@ var Game = function (gameContainer) {
 
     // Buttons
     this.$startBtn = $('.btn--start-game');
+    this.$startBtn = $('.back-arrow');
     this.$beforeBtn = $('.btn--before');
     this.$afterBtn = $('.btn--after');
 
@@ -49,6 +50,12 @@ var Game = function (gameContainer) {
         e.preventDefault();
         // Init game with game type 1
         that.initGame(1);
+    });
+
+    this.$backBtn.on('click', function(e){
+        e.preventDefault();
+
+        that.stopGame();
     });
 
     this.$beforeBtn.on('click', function (e) {
@@ -114,6 +121,13 @@ Game.prototype.initGame = function (gameType) {
         console.error('Could not load game data. ' + response.status + ' ' + response.statusText);
     });
 
+};
+
+Game.prototype.stopGame = function()
+{
+    // Ask if user wants to stop the game if he is in the game
+
+    // Reset game and go to main screen
 };
 
 Game.prototype.initTimer = function () {

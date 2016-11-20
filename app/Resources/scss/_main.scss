@@ -40,6 +40,41 @@ body {
   box-shadow: 1px 0px 13px 0px rgba(0, 0, 0, 0.75);
 }
 
+.back-arrow{
+  display: flex;
+  align-items: center;
+  width: 40px;
+  height:40px;
+  padding: 10px;
+  margin:5px;
+
+  span {
+    height: 1px;
+    width: 20px;
+    background: $light_gray;
+    content: '';
+
+    &:after, &:before {
+      display: block;
+      content: '';
+      width: 10px;
+      height: 1px;
+      background: $light_gray;
+      transform-origin: left center;
+    }
+
+    &:after {
+      transform: rotate(30deg);
+    }
+    &:before {
+      transform: rotate(-30deg);
+    }
+
+
+  }
+
+}
+
 .loader {
   position: absolute;
   top: 0;
@@ -134,6 +169,8 @@ body {
 header {
   height: $header_height;
   background: $dark_blue;
+  padding-top: 1px;
+  margin-top: -1px;
 }
 
 .btn {

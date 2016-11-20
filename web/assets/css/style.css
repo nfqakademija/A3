@@ -25,7 +25,7 @@ body {
 
 #main-block {
   width: 100%;
-  max-width: 700px;
+  max-width: 600px;
   margin: 0 auto;
   position: relative;
   height: 100%; }
@@ -39,6 +39,32 @@ body {
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 1px 0px 13px 0px rgba(0, 0, 0, 0.75); }
+
+.back-arrow {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  margin: 5px; }
+  .back-arrow span {
+    height: 1px;
+    width: 20px;
+    background: #DDDDDD;
+    content: ''; }
+    .back-arrow span:after, .back-arrow span:before {
+      display: block;
+      content: '';
+      width: 10px;
+      height: 1px;
+      background: #DDDDDD;
+      transform-origin: left center; }
+    .back-arrow span:after {
+      transform: rotate(30deg); }
+    .back-arrow span:before {
+      transform: rotate(-30deg); }
 
 .loader {
   position: absolute;
@@ -114,7 +140,9 @@ body {
 
 header {
   height: 50px;
-  background: #445D73; }
+  background: #445D73;
+  padding-top: 1px;
+  margin-top: -1px; }
 
 .btn {
   display: inline-block;
