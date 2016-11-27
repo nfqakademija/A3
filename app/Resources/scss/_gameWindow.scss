@@ -72,12 +72,17 @@
   font-weight: bold;
   color: #01AF98;
   text-align: center;
+  position: relative;
+  z-index: 4;
+  padding: 40px;
 }
 
 .description {
   font-style: italic;
   color: #212121;
   text-align: center;
+  position: relative;
+  z-index: 4;
 }
 
 .socondary-fact {
@@ -109,4 +114,38 @@
     content: '';
     clear: both;
   }
+}
+
+.game-starting-overlay{
+  position: absolute;
+  top:0;
+  right:0;
+  bottom: 0;
+  left:0;
+  background: rgba(#ffffff,0.9);
+  z-index:3;
+}
+
+.game-starting-overlay--counting{
+  position: absolute;
+  top:50%;
+  width: 100%;
+  margin-top: -140px;
+  color: rgba(#000000,0.3);
+  text-align: center;
+  font-size: 280px;
+  animation: counter_fade 5s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes counter_fade {
+  0%{
+    transform: scale(1,1);
+    opacity: 1;
+  }
+  100%{
+    transform: scale(3,3);
+    opacity: 0;
+  }
+
 }
