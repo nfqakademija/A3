@@ -10258,6 +10258,7 @@ var Game = function (gameContainer) {
     // Init elements
     // Main container
     this.$gameContainer = $(gameContainer);
+    this.$bottomWrapper = $('.bottom-wrapper');
 
     // Buttons
     this.$startBtn = $('.btn--start-game');
@@ -10426,6 +10427,13 @@ Game.prototype.showNextQuestion = function () {
  */
 Game.prototype.checkAnswer = function (answer) {
     this.facts[this.qestionIndex].answer_was_right = answer == this.facts[this.qestionIndex].is_before;
+    this.$bottomWrapper.removeClass('right').removeClass('wrong');
+    if(this.facts[this.qestionIndex].answer_was_right){
+        this.$bottomWrapper.addClass('right');
+    }else{
+        this.$bottomWrapper.addClass('wrong');
+    }
+
     this.qestionIndex++;
     this.showNextQuestion();
 };
