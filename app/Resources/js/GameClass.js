@@ -9,6 +9,7 @@ var Game = function (gameContainer) {
     this.factsCount = 0;
     this.mainFact = {};
 
+    this.isPlaying = false;
     this.qestionIndex = 0;
     this.timer = null;
     this.beforeGameTimer = null;
@@ -20,12 +21,14 @@ var Game = function (gameContainer) {
     // Main container
     this.$gameContainer = $(gameContainer);
     this.$bottomWrapper = $('.bottom-wrapper');
-
+    this.$quitModal = $('.quit-modal');
     // Buttons
     this.$startBtn = $('.btn--start-game');
     this.$backBtn = $('.back-arrow');
     this.$beforeBtn = $('.btn--before');
     this.$afterBtn = $('.btn--after');
+    this.$quitYes = $('.quit-yes');
+    this.$quitNo = $('.quit-no');
 
     // Screens
     this.$startScreen = $('.screen--start');
@@ -85,6 +88,17 @@ var Game = function (gameContainer) {
         clearTimeout(that.beforeGameTimer);
         that.startGame();
     });
+
+    this.$quitYes.on('click',function(e){
+        e.preventDefault();
+        that.quitToMainScreen(true);
+    });
+
+    this.$quitNo.on('click',function(e){
+        e.preventDefault();
+        that.quitToMainScreen(false);
+    });
+
 };
 
 Game.prototype.initGame = function (gameType) {
@@ -121,12 +135,13 @@ Game.prototype.initGame = function (gameType) {
         that.factsCount = that.facts.length;
         that.$gameMainFact.text(that.mainFact.name);
         that.maxTime = 590;
-
+        that.isPlaying = true;
         that.$startScreen.hide();
         that.$gameScreen.fadeIn();
         that.hideLoader();
+        that.secondsToWait = 3;
         that.setBeforeGameCounter();
-
+        that.showBeforeStartScreen();
 
     }).fail(function (response) {
         // Display error
@@ -163,8 +178,24 @@ Game.prototype.setBeforeGameCounter = function()
 Game.prototype.stopGame = function ()
 {
     // Ask if user wants to stop the game if he is in the game
+    if(this.isPlaying){
+        this.$quitModal.fadeIn();
+        return;
+    }
+
 
     // Reset game and go to main screen
+
+    this.quitToMainScreen(true);
+};
+
+Game.prototype.quitToMainScreen = function(wantsToQuit)
+{
+    this.$quitModal.fadeOut();
+    if(!wantsToQuit)
+        return;
+
+    this.resetGame();
 };
 
 Game.prototype.initKeyboardControls = function () {
@@ -215,6 +246,10 @@ Game.prototype.hideLoader = function () {
     this.$loader.fadeOut();
 };
 
+Game.prototype.showBeforeStartScreen = function () {
+    this.$gameWaitScreen.fadeIn();
+};
+
 Game.prototype.hideBeforeStartScreen = function () {
     this.$gameWaitScreen.fadeOut();
 };
@@ -256,7 +291,7 @@ Game.prototype.endGame = function () {
     // Display end game screen
     // Get full details
     // Display results
-
+    this.isPlaying = false;
     var that = this;
     clearInterval(this.timer);
     var goodAnswersCount = 0;
@@ -283,7 +318,7 @@ Game.prototype.endGame = function () {
     this.$endGameTime.text(this.maxTime - this.timeLeft);
     this.$endGameAnswers.text(goodAnswersCount);
 
-    that.$gameScreen.fadeOut();
+    that.$gameScreen.fadeOut(10);
     that.$endGameScreen.fadeIn();
 };
 
@@ -300,4 +335,14 @@ Game.prototype.showDetails = function ($button) {
 
 Game.prototype.resetGame = function () {
     // Reset game and get back to main screen
+    var that = this;
+
+    clearInterval(that.timer);
+
+    this.isPlaying = false;
+    this.facts = [];
+    this.$endGameScreen.fadeOut(10);
+    this.$gameScreen.fadeOut(10);
+    this.$startScreen.fadeIn();
+    this.$endGameResults.html('');
 };

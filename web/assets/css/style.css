@@ -160,6 +160,29 @@ header {
     transform: translateY(-3px);
     box-shadow: 0px 12px 18px -9px rgba(0, 0, 0, 0.26); }
 
+.quit-modal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.95);
+  text-align: center;
+  color: #DDDDDD;
+  display: none;
+  z-index: 10; }
+  .quit-modal .btn {
+    margin: 10px;
+    width: 80px; }
+
+.quit-modal--holder {
+  position: absolute;
+  top: 40%;
+  width: 100%; }
+
+.quit-modal--question {
+  padding: 40px; }
+
 /**
 * Css for game intro wondow
 **/
@@ -241,7 +264,7 @@ header {
 
 .main-fact-section {
   padding: 20px;
-  background: #c4c4c4;
+  background: rgba(170, 170, 170, 0.3);
   margin: 10px 20px;
   border-radius: 3px;
   position: relative;
