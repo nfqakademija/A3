@@ -130,65 +130,37 @@
   left:0;
   background: rgba(#ffffff,0.9);
   z-index:3;
-  display: none;
+  //display: none;
 }
 
-.game-starting-overlay--counting{
+.game-starting-overlay--counting {
   position: absolute;
-  top:50%;
+  top: 50%;
   width: 100%;
   margin-top: -140px;
-  color: rgba(#000000,0.3);
+  color: rgba(#000000, 0.2);
   text-align: center;
   font-size: 280px;
-  animation: counter_fade 5s;
-  animation-iteration-count: infinite;
 
-
+  &.animate {
+    animation: counter_fade 2s;
+    animation-iteration-count: infinite;
+  }
 }
 
-.bottom-wrapper.wrong{
-  animation: wrong_answer .4s;
-}
 
-.bottom-wrapper.right{
-  animation: right_answer .4s;
-}
 
 
 
 @keyframes counter_fade {
   0%{
-    transform: scale(1,1);
+    transform: scale(2,2);
     opacity: 1;
   }
   100%{
-    transform: scale(3,3);
+    transform: scale(1,1);
     opacity: 0;
   }
 
 }
 
-@keyframes wrong_answer {
-  0%{
-    background: $dark_blue;
-  }
-  50%{
-    background: $red;
-  }
-  100%{
-    background: $dark_blue;
-  }
-}
-
-@keyframes right_answer {
-  0%{
-    background: $dark_blue;
-  }
-  50%{
-    background: $green;
-  }
-  100%{
-    background: $dark_blue;
-  }
-}

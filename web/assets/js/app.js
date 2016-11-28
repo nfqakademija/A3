@@ -10252,6 +10252,8 @@ var Game = function (gameContainer) {
 
     this.qestionIndex = 0;
     this.timer = null;
+    this.beforeGameTimer = null;
+    this.secondsToWait = 3;
     this.timeLeft = 0;
     this.maxTime = 0;
 
@@ -10300,7 +10302,7 @@ var Game = function (gameContainer) {
         that.initGame(1);
     });
 
-    this.$backBtn.on('click', function(e){
+    this.$backBtn.on('click', function (e) {
         e.preventDefault();
 
         that.stopGame();
@@ -10317,6 +10319,13 @@ var Game = function (gameContainer) {
         // False - fact was after main fact
         that.checkAnswer(false);
     });
+
+    this.$gameWaitScreen.on('click', function (e) {
+        e.preventDefault();
+        // False - fact was after main fact
+        clearTimeout(that.beforeGameTimer);
+        that.startGame();
+    });
 };
 
 Game.prototype.initGame = function (gameType) {
@@ -10329,17 +10338,17 @@ Game.prototype.initGame = function (gameType) {
 
 
     // Load stubs data
-   /* var allStubs = new Stubs();
-    this.mainFact = allStubs.getMainFact();
-    this.facts = allStubs.getAllFacts();
+    /* var allStubs = new Stubs();
+     this.mainFact = allStubs.getMainFact();
+     this.facts = allStubs.getAllFacts();
 
-    that.factsCount = that.facts.length;
-    that.$gameMainFact.text(that.mainFact.name);
-    that.showNextQuestion();
-    that.$startScreen.fadeOut();
-    that.$gameScreen.fadeIn();
-    this.maxTime = 50;
-    that.initTimer();*/
+     that.factsCount = that.facts.length;
+     that.$gameMainFact.text(that.mainFact.name);
+     that.showNextQuestion();
+     that.$startScreen.fadeOut();
+     that.$gameScreen.fadeIn();
+     this.maxTime = 50;
+     that.initTimer();*/
 
 
     // Get game facts
@@ -10351,17 +10360,14 @@ Game.prototype.initGame = function (gameType) {
         // Set questions array
         that.facts = data.questions;
         that.factsCount = that.facts.length;
-
         that.$gameMainFact.text(that.mainFact.name);
-        that.showNextQuestion();
-
-
-        that.$startScreen.fadeOut();
-        that.$gameScreen.fadeIn();
         that.maxTime = 590;
-        that.initTimer();
-        that.initKeyboardControls();
+
+        that.$startScreen.hide();
+        that.$gameScreen.fadeIn();
         that.hideLoader();
+        that.setBeforeGameCounter();
+
 
     }).fail(function (response) {
         // Display error
@@ -10371,22 +10377,46 @@ Game.prototype.initGame = function (gameType) {
 
 };
 
-Game.prototype.stopGame = function()
+
+Game.prototype.startGame = function ()
+{
+    this.showNextQuestion();
+    this.initTimer();
+    this.initKeyboardControls();
+    this.hideBeforeStartScreen();
+};
+
+Game.prototype.setBeforeGameCounter = function()
+{
+    this.$gameWaitScreenCounter.text(this.secondsToWait--);
+    this.$gameWaitScreenCounter.removeClass('animate');
+    this.$gameWaitScreenCounter.addClass('animate');
+    var that = this;
+    that.beforeGameTimer = setTimeout(function(){
+        if(that.secondsToWait > 0){
+            that.setBeforeGameCounter();
+        }else{
+            that.startGame();
+        }
+    },2000);
+};
+
+Game.prototype.stopGame = function ()
 {
     // Ask if user wants to stop the game if he is in the game
 
     // Reset game and go to main screen
 };
 
-Game.prototype.initKeyboardControls = function()
-{
+Game.prototype.initKeyboardControls = function () {
     var that = this;
-    $(document).keydown(function(event){
-
-        if(event.keyCode  == 39){
+    $(document).keydown(function (event) {
+        if (event.keyCode == 39) {
+            // Pressed right arrow button
             event.preventDefault();
             that.checkAnswer(false);
-        }else if(event.keyCode  == 37){
+        } else if (event.keyCode == 37) {
+            // Pressed left arroe button
             event.preventDefault();
             that.checkAnswer(true);
         }
@@ -10426,6 +10456,10 @@ Game.prototype.hideLoader = function () {
     this.$loader.fadeOut();
 };
 
+Game.prototype.hideBeforeStartScreen = function () {
+    this.$gameWaitScreen.fadeOut();
+};
+
 Game.prototype.showNextQuestion = function () {
     if (this.qestionIndex < this.factsCount) {
         // Display new question
@@ -10443,11 +10477,17 @@ Game.prototype.showNextQuestion = function () {
 Game.prototype.checkAnswer = function (answer) {
     this.facts[this.qestionIndex].answer_was_right = answer == this.facts[this.qestionIndex].is_before;
     this.$bottomWrapper.removeClass('right').removeClass('wrong');
-    if(this.facts[this.qestionIndex].answer_was_right){
-        this.$bottomWrapper.addClass('right');
-    }else{
-        this.$bottomWrapper.addClass('wrong');
+    var that = this;
+    if (this.facts[this.qestionIndex].answer_was_right) {
+        this.$bottomWrapper.css({'background':'#01AF98'});
+    } else {
+
+        this.$bottomWrapper.css({'background':'#fe6875'});
     }
+
+    setTimeout(function(){
+        that.$bottomWrapper.css({'background':'#445D73'});
+    },300);
 
     this.qestionIndex++;
     this.showNextQuestion();
