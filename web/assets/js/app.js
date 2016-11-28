@@ -10360,7 +10360,7 @@ Game.prototype.initGame = function (gameType) {
         that.$gameScreen.fadeIn();
         that.maxTime = 590;
         that.initTimer();
-
+        that.initKeyboardControls();
         that.hideLoader();
 
     }).fail(function (response) {
@@ -10376,6 +10376,21 @@ Game.prototype.stopGame = function()
     // Ask if user wants to stop the game if he is in the game
 
     // Reset game and go to main screen
+};
+
+Game.prototype.initKeyboardControls = function()
+{
+    var that = this;
+    $(document).keydown(function(event){
+
+        if(event.keyCode  == 39){
+            event.preventDefault();
+            that.checkAnswer(false);
+        }else if(event.keyCode  == 37){
+            event.preventDefault();
+            that.checkAnswer(true);
+        }
+    });
 };
 
 Game.prototype.initTimer = function () {
