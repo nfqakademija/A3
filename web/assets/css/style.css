@@ -191,7 +191,8 @@ header {
     clear: both; }
 
 .timer {
-  vertical-align: middle;
+  padding-top: 4px;
+  vertical-align: top;
   height: 32px;
   line-height: 32px;
   float: left; }
@@ -205,7 +206,8 @@ header {
   border: solid 1px #333333;
   border-radius: 20px;
   margin-right: 10px;
-  position: relative; }
+  position: relative;
+  vertical-align: top; }
   .time-icon:before {
     display: block;
     content: '';
@@ -225,9 +227,10 @@ header {
 
 .timer-content {
   display: inline-block;
-  vertical-align: middle; }
+  vertical-align: top; }
 
 .question-count {
+  vertical-align: top;
   float: right; }
 
 .timer, .question-count {
@@ -285,7 +288,8 @@ header {
   bottom: 0;
   left: 0;
   background: rgba(255, 255, 255, 0.9);
-  z-index: 3; }
+  z-index: 3;
+  display: none; }
 
 .game-starting-overlay--counting {
   position: absolute;
