@@ -30,11 +30,17 @@ var Game = function (gameContainer) {
     this.$endGameScreen = $('.screen--end');
     this.$fullDetailsScreen = $('.modal--full-details');
 
+    // Loading screen
+    this.$loader = $('.loader');
+    this.$loaderText = $('.loader-text');
+
     // Game objects
     this.$gameTimer = $('.timer-content');
     this.$gameQuestionCount = $('.question-count');
     this.$gameMainFact = $('.main-fact');
     this.$gameSecondaryFact = $('.socondary-fact');
+    this.$gameWaitScreen = $('.game-starting-overlay');
+    this.$gameWaitScreenCounter = $('.game-starting-overlay--counting');
 
     // End game objects
     this.$endGameTime = $('.time-holder');
@@ -155,12 +161,12 @@ Game.prototype.checkTime = function () {
 };
 
 Game.prototype.showLoader = function (loader_text) {
-    $('.loader-text').text(loader_text);
-    $('.loader').fadeIn();
+    this.$loaderText.text(loader_text);
+    this.$loader.fadeIn();
 };
 
 Game.prototype.hideLoader = function () {
-    $('.loader').fadeOut();
+    this.$loader.fadeOut();
 };
 
 Game.prototype.showNextQuestion = function () {
