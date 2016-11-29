@@ -31,12 +31,17 @@ var Game = function (gameContainer) {
     this.$quitNo = $('.quit-no');
     this.$restartGame = $('.restart-game');
     this.$goToMain = $('.go-to-main');
+    this.$closeDetailsWiev = $('.close-full-details');
 
     // Screens
     this.$startScreen = $('.screen--start');
     this.$gameScreen = $('.screen--game');
     this.$endGameScreen = $('.screen--end');
     this.$fullDetailsScreen = $('.modal--full-details');
+
+    // Full details
+    this.$fullDetailsTitle = $('.full-details-title');
+    this.$fullDetailsContent = $('.full-details-content');
 
     // Loading screen
     this.$loader = $('.loader');
@@ -111,6 +116,11 @@ var Game = function (gameContainer) {
     this.$goToMain.on('click',function(e){
         e.preventDefault();
         that.quitToMainScreen(true);
+    });
+
+    this.$closeDetailsWiev.on('click',function(e){
+        e.preventDefault();
+        that.$fullDetailsScreen.fadeOut();
     });
 
 };
@@ -370,11 +380,14 @@ Game.prototype.endGame = function () {
 };
 
 Game.prototype.showDetails = function ($button) {
+    var that = this;
     var factId = $button.data('fact_id');
-    console.log(factId);
+    this.showLoader('gauname fakto informaciją');
     this.API.loadFactsDetailsDataById(factId).done(function (data) {
-
-
+        that.$fullDetailsTitle.text(data.title);
+        that.$fullDetailsContent.html(data.content);
+        that.$fullDetailsScreen.fadeIn();
+        that.hideLoader();
     }).fail(function (response) {
         console.error('Could not load full details data. ' + response.status + ' ' + response.statusText);
     });

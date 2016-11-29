@@ -182,6 +182,38 @@ header {
 .quit-modal--question {
   padding: 40px; }
 
+.modal--full-details {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 4;
+  overflow-y: auto;
+  display: none; }
+  .modal--full-details header {
+    font-size: 22px;
+    color: #DDDDDD;
+    padding: 10px;
+    padding-right: 40px; }
+
+.close-full-details {
+  display: block;
+  color: #fe6875;
+  font-size: 50px;
+  font-weight: 100;
+  line-height: 50px;
+  text-decoration: none;
+  padding: 0 4px;
+  position: absolute;
+  top: 0px;
+  right: 6px; }
+
+.full-details-content {
+  padding: 20px;
+  color: #DDDDDD; }
+
 /**
 * Css for game intro wondow
 **/
