@@ -1,11 +1,11 @@
 var API = function()
 {
-    this.baseUrl = '';
+    this.baseUrl = 'http://10.10.10.10:8000';
 };
 
 API.prototype.loadGameData = function(gameType)
 {
-    var url = this.baseUrl+'/loadgamedata';
+    var url = this.baseUrl+'/game/init';
     return $.get(url);
 };
 

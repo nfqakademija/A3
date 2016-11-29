@@ -3,7 +3,7 @@
 {% block main_block_inner %}
     <div class="main-wrapper">
         <header>
-            Headeris
+            <a href="#" class="back-arrow"><span></span></a>
         </header>
 
         <div class="screen screen--start">
@@ -14,38 +14,53 @@
                 Debitis, dolorum.
             </div>
             <div class="bottom-wrapper">
-                <a href="" class="btn btn--start-game">Pradėti</a>
+                <div class="bottom-wrapper__content">
+                    <a href="#" class="btn btn--start-game">Pradėti</a>
+                </div>
             </div>
         </div>
 
         <div class="screen screen--game">
             <div class="game-status">
-                <div class="timer">30s</div>
+                <div class="timer"><span class="time-icon"></span><span class="timer-content"></span></div>
                 <div class="question-count">2 / 20</div>
             </div>
-            <div class="main-fact">
-                Zalgirio musis
+            <div class="main-fact-section">
+                <div class="main-fact">
+
+                </div>
+                <div class="description">įvyko anksčiau ar vėliau negu</div>
             </div>
-            <div class="description">ivyko anksciau ar veliau negu</div>
             <div class="bottom-wrapper">
                 <div class="socondary-fact">
-                    Punios musis
+
                 </div>
                 <div class="bottom-buttons">
                     <a href="" class="btn btn--before">Anksčiau</a>
                     <a href="" class="btn btn--after">Vėliau</a>
                 </div>
             </div>
+            <div class="game-starting-overlay">
+                <div class="game-starting-overlay--counting">
+                    3
+                </div>
+            </div>
         </div>
 
         <div class="screen screen--end">
-            <h2>The game is finished</h2>
+            <h2>Sveikiname!</h2>
             <div class="game-end-text">
                 Per
-                <span class="time-holder"></span> sekundziu atsakete
-                <span class="answers-holder"></span> klausimu.
+                <span class="time-holder"></span> atsakėte
+                <span class="answers-holder"></span>.
+            </div>
+
+            <div class="end-game-buttons">
+                <a href="" class="btn restart-game">Žaisti dar kartą</a>
+                <a href="" class="btn go-to-main">Grįžti į pražią</a>
             </div>
             <div class="bottom-wrapper">
+                <h3 class="bottom-wrapper--header">Pasitikrink atsakymus</h3>
                 <div class="results-holder">
                     <ul class="results">
 
@@ -54,7 +69,19 @@
             </div>
         </div>
         <div class="loader">
-            <div class="loader-elem"></div>
+            <div class="loader-elem">
+                <span class="load-circle"></span><span class="load-circle"></span><span class="load-circle"></span>
+                <div class="loader-text">Turinys kraunamas</div>
+            </div>
+        </div>
+        <div class="quit-modal">
+            <div class="quit-modal--holder">
+                <div class="quit-modal--question">Ar tikrai norite nutraukti žaidimą?</div>
+                <div class="quit-modal--buttons">
+                    <a href="" class="btn quit-yes">Taip</a>
+                    <a href="" class="btn quit-no">Ne</a>
+                </div>
+            </div>
         </div>
     </div>
     <div class="modal modal--full-details">

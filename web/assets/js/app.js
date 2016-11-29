@@ -10221,12 +10221,12 @@ return jQuery;
 
 var API = function()
 {
-    this.baseUrl = '';
+    this.baseUrl = 'http://10.10.10.10:8000';
 };
 
 API.prototype.loadGameData = function(gameType)
 {
-    var url = this.baseUrl+'/loadgamedata';
+    var url = this.baseUrl+'/game/init';
     return $.get(url);
 };
 
@@ -10250,19 +10250,28 @@ var Game = function (gameContainer) {
     this.factsCount = 0;
     this.mainFact = {};
 
+    this.isPlaying = false;
     this.qestionIndex = 0;
     this.timer = null;
+    this.beforeGameTimer = null;
+    this.secondsToWait = 3;
     this.timeLeft = 0;
     this.maxTime = 0;
 
     // Init elements
     // Main container
     this.$gameContainer = $(gameContainer);
-
+    this.$bottomWrapper = $('.bottom-wrapper');
+    this.$quitModal = $('.quit-modal');
     // Buttons
     this.$startBtn = $('.btn--start-game');
+    this.$backBtn = $('.back-arrow');
     this.$beforeBtn = $('.btn--before');
     this.$afterBtn = $('.btn--after');
+    this.$quitYes = $('.quit-yes');
+    this.$quitNo = $('.quit-no');
+    this.$restartGame = $('.restart-game');
+    this.$goToMain = $('.go-to-main');
 
     // Screens
     this.$startScreen = $('.screen--start');
@@ -10270,11 +10279,17 @@ var Game = function (gameContainer) {
     this.$endGameScreen = $('.screen--end');
     this.$fullDetailsScreen = $('.modal--full-details');
 
+    // Loading screen
+    this.$loader = $('.loader');
+    this.$loaderText = $('.loader-text');
+
     // Game objects
-    this.$gameTimer = $('.timer');
+    this.$gameTimer = $('.timer-content');
     this.$gameQuestionCount = $('.question-count');
     this.$gameMainFact = $('.main-fact');
     this.$gameSecondaryFact = $('.socondary-fact');
+    this.$gameWaitScreen = $('.game-starting-overlay');
+    this.$gameWaitScreenCounter = $('.game-starting-overlay--counting');
 
     // End game objects
     this.$endGameTime = $('.time-holder');
@@ -10292,6 +10307,12 @@ var Game = function (gameContainer) {
         that.initGame(1);
     });
 
+    this.$backBtn.on('click', function (e) {
+        e.preventDefault();
+
+        that.stopGame();
+    });
+
     this.$beforeBtn.on('click', function (e) {
         e.preventDefault();
         // True - fact was before main fact
@@ -10303,29 +10324,59 @@ var Game = function (gameContainer) {
         // False - fact was after main fact
         that.checkAnswer(false);
     });
+
+    this.$gameWaitScreen.on('click', function (e) {
+        e.preventDefault();
+        // False - fact was after main fact
+        clearTimeout(that.beforeGameTimer);
+        that.startGame();
+    });
+
+    this.$quitYes.on('click',function(e){
+        e.preventDefault();
+        that.quitToMainScreen(true);
+    });
+
+    this.$quitNo.on('click',function(e){
+        e.preventDefault();
+        that.quitToMainScreen(false);
+    });
+
+    this.$restartGame.on('click',function(e){
+        e.preventDefault();
+        that.$endGameResults.html('');
+        that.$endGameScreen.fadeOut(10);
+        that.initGame();
+    });
+
+    this.$goToMain.on('click',function(e){
+        e.preventDefault();
+        that.quitToMainScreen(false);
+    });
+
 };
 
 Game.prototype.initGame = function (gameType) {
     var that = this;
     // Display loader
-    this.showLoader();
+    this.showLoader('Ruošiamas žaidimas. Prašome palaukti.');
 
     // Reset questions index
     this.qestionIndex = 0;
-
+    this.facts = [];
 
     // Load stubs data
-    var allStubs = new Stubs();
-    this.mainFact = allStubs.getMainFact();
-    this.facts = allStubs.getAllFacts();
+    /* var allStubs = new Stubs();
+     this.mainFact = allStubs.getMainFact();
+     this.facts = allStubs.getAllFacts();
 
-    that.factsCount = that.facts.length;
-    that.$gameMainFact.text(that.mainFact.name);
-    that.showNextQuestion();
-    that.$startScreen.fadeOut();
-    that.$gameScreen.fadeIn();
-    this.maxTime = 50;
-    that.initTimer();
+     that.factsCount = that.facts.length;
+     that.$gameMainFact.text(that.mainFact.name);
+     that.showNextQuestion();
+     that.$startScreen.fadeOut();
+     that.$gameScreen.fadeIn();
+     this.maxTime = 50;
+     that.initTimer();*/
 
 
     // Get game facts
@@ -10333,21 +10384,20 @@ Game.prototype.initGame = function (gameType) {
     this.API.loadGameData(gameType).done(function (data) {
         // Parse data
         // Set main fact
-        that.mainFact = data.mainFact;
+        that.mainFact = data.root;
         // Set questions array
-        that.facts = data.facts;
+        that.facts = data.questions;
         that.factsCount = that.facts.length;
-
         that.$gameMainFact.text(that.mainFact.name);
-        that.showNextQuestion();
-
-
-        that.$startScreen.fadeOut();
+        that.maxTime = 590;
+        that.isPlaying = true;
+        that.$startScreen.hide();
         that.$gameScreen.fadeIn();
-
-        that.initTimer(30);
-
         that.hideLoader();
+        that.secondsToWait = 3;
+        that.setBeforeGameCounter();
+        that.showBeforeStartScreen();
+        that.showQuitButton();
 
     }).fail(function (response) {
         // Display error
@@ -10355,6 +10405,68 @@ Game.prototype.initGame = function (gameType) {
         console.error('Could not load game data. ' + response.status + ' ' + response.statusText);
     });
 
+};
+
+
+Game.prototype.startGame = function ()
+{
+    this.showNextQuestion();
+    this.initTimer();
+    this.initKeyboardControls();
+    this.hideBeforeStartScreen();
+};
+
+Game.prototype.setBeforeGameCounter = function()
+{
+    this.$gameWaitScreenCounter.text(this.secondsToWait--);
+    this.$gameWaitScreenCounter.removeClass('animate');
+    this.$gameWaitScreenCounter.addClass('animate');
+    var that = this;
+    that.beforeGameTimer = setTimeout(function(){
+        if(that.secondsToWait > 0){
+            that.setBeforeGameCounter();
+        }else{
+            that.startGame();
+        }
+    },2000);
+};
+
+Game.prototype.stopGame = function ()
+{
+    // Ask if user wants to stop the game if he is in the game
+    if(this.isPlaying){
+        this.$quitModal.fadeIn();
+        return;
+    }
+
+
+    // Reset game and go to main screen
+
+    this.quitToMainScreen(true);
+};
+
+Game.prototype.quitToMainScreen = function(wantsToQuit)
+{
+    this.$quitModal.fadeOut();
+    if(!wantsToQuit)
+        return;
+
+    this.resetGame();
+};
+
+Game.prototype.initKeyboardControls = function () {
+    var that = this;
+    $(document).keydown(function (event) {
+        if (event.keyCode == 39) {
+            // Pressed right arrow button
+            event.preventDefault();
+            that.checkAnswer(false);
+        } else if (event.keyCode == 37) {
+            // Pressed left arroe button
+            event.preventDefault();
+            that.checkAnswer(true);
+        }
+    });
 };
 
 Game.prototype.initTimer = function () {
@@ -10381,12 +10493,29 @@ Game.prototype.checkTime = function () {
 
 };
 
-Game.prototype.showLoader = function () {
-    $('.loader').fadeIn();
+Game.prototype.showLoader = function (loader_text) {
+    this.$loaderText.text(loader_text);
+    this.$loader.fadeIn();
 };
 
 Game.prototype.hideLoader = function () {
-    $('.loader').fadeOut();
+    this.$loader.fadeOut();
+};
+
+Game.prototype.showBeforeStartScreen = function () {
+    this.$gameWaitScreen.fadeIn();
+};
+
+Game.prototype.hideBeforeStartScreen = function () {
+    this.$gameWaitScreen.fadeOut();
+};
+
+Game.prototype.showQuitButton = function () {
+    this.$backBtn.css('display','flex');
+};
+
+Game.prototype.hideQuitButton = function () {
+    this.$backBtn.css('display','none');
 };
 
 Game.prototype.showNextQuestion = function () {
@@ -10404,7 +10533,20 @@ Game.prototype.showNextQuestion = function () {
  * Checks if answer is wright or wrong
  */
 Game.prototype.checkAnswer = function (answer) {
-    this.facts[this.qestionIndex].answer_was_right = answer == this.facts[this.qestionIndex].was_before;
+    this.facts[this.qestionIndex].answer_was_right = answer == this.facts[this.qestionIndex].is_before;
+    this.$bottomWrapper.removeClass('right').removeClass('wrong');
+    var that = this;
+    if (this.facts[this.qestionIndex].answer_was_right) {
+        this.$bottomWrapper.css({'background':'#00B259'});
+    } else {
+
+        this.$bottomWrapper.css({'background':'#fe6875'});
+    }
+
+    setTimeout(function(){
+        that.$bottomWrapper.css({'background':'#445D73'});
+    },300);
+
     this.qestionIndex++;
     this.showNextQuestion();
 };
@@ -10414,6 +10556,8 @@ Game.prototype.endGame = function () {
     // Get full details
     // Display results
 
+    this.showLoader('Skaičiuojami rezultatai. Prašome palaukti.')
+    this.isPlaying = false;
     var that = this;
     clearInterval(this.timer);
     var goodAnswersCount = 0;
@@ -10421,11 +10565,13 @@ Game.prototype.endGame = function () {
     $.each(that.facts, function (i, fact) {
         var $resultLine = $('<li class="results--item"></li>');
         $resultLine.text(fact.name);
+        $resultLine.prepend('<span class="correct-icon" />');
+        $resultLine.prepend('<span class="wrong-icon" />');
         if (fact.answer_was_right) {
             goodAnswersCount++;
         } else {
             // Show that the answer was wrong
-            $resultLine.addClass('wrong').append('<span>Wrong</span>');
+            $resultLine.addClass('wrong');
         }
         var $moreBtn = $('<a href="#" class="btn btn--more-details" data-fact_id="' + fact.id + '">Skaityti daugiau</a>');
         $moreBtn.on('click', function (e) {
@@ -10437,11 +10583,31 @@ Game.prototype.endGame = function () {
         that.$endGameResults.append($resultLine);
     });
 
-    this.$endGameTime.text(this.maxTime - this.timeLeft);
-    this.$endGameAnswers.text(goodAnswersCount);
+    var timeSpent = this.maxTime - this.timeLeft;
+    var sec = 'sekundę';
 
-    that.$gameScreen.fadeOut();
-    that.$endGameScreen.fadeIn();
+    if((timeSpent > 1 && timeSpent < 10) || (timeSpent > 20 && timeSpent%10 !== 0 && timeSpent%10 > 1)){
+        sec = 'sekundes';
+    }else if(timeSpent%10 == 0 || timeSpent < 20 && timeSpent !== 1){
+        sec = 'sekundžių';
+    }
+
+
+    var answers = 'klausimą';
+
+    if((goodAnswersCount > 1 && goodAnswersCount < 10)
+        || (goodAnswersCount > 20 && goodAnswersCount%10 !== 0 && goodAnswersCount%10 > 1)){
+        answers = 'klausimus';
+    }else if(goodAnswersCount%10 == 0 || goodAnswersCount < 20 && goodAnswersCount !== 1){
+        answers = 'klausimų';
+    }
+
+    this.$endGameTime.text(timeSpent+' '+sec);
+    this.$endGameAnswers.text(goodAnswersCount + ' ' + answers);
+
+    this.$gameScreen.fadeOut(10);
+    this.$endGameScreen.fadeIn();
+    this.hideLoader();
 };
 
 Game.prototype.showDetails = function ($button) {
@@ -10457,6 +10623,17 @@ Game.prototype.showDetails = function ($button) {
 
 Game.prototype.resetGame = function () {
     // Reset game and get back to main screen
+    var that = this;
+
+    clearInterval(that.timer);
+
+    this.isPlaying = false;
+    this.facts = [];
+    this.$endGameResults.html('');
+    this.$endGameScreen.fadeOut(10);
+    this.$gameScreen.fadeOut(10);
+    this.$startScreen.fadeIn();
+    this.hideQuitButton();
 };
 var Stubs = function()
 {
