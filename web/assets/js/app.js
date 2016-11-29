@@ -10351,7 +10351,7 @@ var Game = function (gameContainer) {
 
     this.$goToMain.on('click',function(e){
         e.preventDefault();
-        that.quitToMainScreen(false);
+        that.quitToMainScreen(true);
     });
 
 };
