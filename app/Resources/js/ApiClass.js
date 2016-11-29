@@ -1,6 +1,6 @@
 var API = function()
 {
-    this.baseUrl = 'http://10.10.10.10:8000';
+    this.baseUrl = '';
 };
 
 API.prototype.loadGameData = function(gameType)
