@@ -21,7 +21,3 @@ class LoadFacts
     }
 
 }
-
-$call = new LoadFacts();
-$lines = $call->parseFacts();
-var_dump($lines);

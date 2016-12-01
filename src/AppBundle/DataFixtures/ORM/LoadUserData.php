@@ -15,21 +15,19 @@ class LoadUserData implements FixtureInterface
         $call = new LoadFacts();
         $lines = $call->parseFacts();
 
+
         foreach ($lines as $entry) {
             $fact = new Fact();
 
             $fact->setYear($entry[0]);
-            if ($entry[1]!=null)
-            {
+            if ($entry[1] != null) {
                 $fact->setMonth($entry[1]);
             }
-            if ($entry[2]!=null)
-            {
+            if ($entry[2] != null) {
                 $fact->setDay($entry[2]);
             }
             $fact->setName($entry[3]);
-            if ($entry[4]!=null)
-            {
+            if ($entry[4] != null) {
                 $fact->setDescription($entry[4]);
             }
 
@@ -39,4 +37,3 @@ class LoadUserData implements FixtureInterface
         $manager->flush();
     }
 }
-
