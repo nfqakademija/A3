@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Leader;
 /**
  * LeaderRepository
  *
@@ -10,28 +11,44 @@ namespace AppBundle\Repository;
  */
 class LeaderRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function getBetterLeadersCount(Leader $leader): int //
+    public function getBetterCount(int $score, int $timeSpent): int
     {
         $em = $this->getEntityManager();
         $qb = $em->createQueryBuilder();
         // select count
-        $query = $qb->select("l")
+        $query = $qb->select('COUNT(l)')
             ->from('AppBundle:Leader', 'l')
             ->where(
-                $qb->expr()->gt('l.score', $leader->getScore())
+                $qb->expr()->lt('l.score', $score)
             )
             ->andWhere(
-                $qb->expr()->lt('l.time', $leader->getTime())
+                $qb->expr()->gt('l.time', $timeSpent)
             )
             ->getQuery();
-        $result = $query->getResult();
+        $result = $query->getSingleScalarResult();
 
-        return count($result);
+        return $result;
     }
 
-    public function saveLeader(Leader $leader)
+    public function save(Leader $leader)
+    {
+        $em = $this->getEntityManager();
+
+        $em->persist($leader);
+
+        $em->flush();
+    }
+
+    public function getAll()
     {
         $em = $this->getEntityManager();
         $qb = $em->createQueryBuilder();
+        // select count
+        $query = $qb->select('l')
+            ->from('AppBundle:Leader', 'l')
+            ->getQuery();
+        $result = $query->getResult();
+        var_dump($result);
+        return $result;
     }
 }

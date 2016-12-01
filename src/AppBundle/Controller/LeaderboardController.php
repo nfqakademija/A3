@@ -2,13 +2,53 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Leader;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Repository\LeaderRepository;
+use DateTime;
 
-class GameController extends Controller
+class LeaderboardController extends Controller
 {
     /**
      * @Route("/leaderboard/getbetter", name="leaderboardGetbetter")
      */
-    public function initGameAction()
+    public function getBetterAction()
+    {
+
+
+        $betterCount = $this->getDoctrine()
+            ->getRepository('AppBundle:Leader')->getBetterCount(40,20);
+
+
+
+        return $this->json($betterCount);
+    }
+
+    /**
+     * @Route("/leaderboard/save/{username}/{score}/{timeSpent}", name="leaderboardSave")
+     */
+    public function saveLeaderAction($username, $score, $timeSpent)
+    {
+
+        $leader = new Leader();
+
+        $leader->setUsername($username);
+        $leader->setScore($score);
+        $leader->setTime($timeSpent);
+        $leader->setInsertedOn(new DateTime());
+
+        $betterCount = $this->getDoctrine()
+            ->getRepository('AppBundle:Leader')->save($leader);
+
+        return $this->json($betterCount);
+    }
+
+    /**
+     * @Route("/leaderboard/get", name="leaderboardGet")
+     */
+    public function getLeaderboardAction()
     {
 
 
@@ -25,7 +65,6 @@ class GameController extends Controller
 
         return $this->json($response);
     }
-
 
 
 }
