@@ -27,8 +27,10 @@ class LoadUserData implements FixtureInterface
                 $fact->setDay($entry[2]);
             }
             $fact->setName($entry[3]);
-            if ($entry[4] != null) {
+            if (trim($entry[4]) != null) {
                 $fact->setDescription($entry[4]);
+
+
             }
 
             $manager->persist($fact);
