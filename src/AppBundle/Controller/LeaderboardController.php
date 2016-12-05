@@ -90,7 +90,7 @@ class LeaderboardController extends Controller
         }
 
 
-        return $this->json($leadersArray);
+        return $this->json(['leaders' => $leadersArray]);
     }
 
 

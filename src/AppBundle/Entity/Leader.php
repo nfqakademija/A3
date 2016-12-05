@@ -26,6 +26,7 @@ class Leader
      * @var string
      *
      * @ORM\Column(name="username", type="string", length=255)
+     * @Assert\NotBlank()
      * @Assert\Type("string")
      */
     private $username;
