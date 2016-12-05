@@ -62,6 +62,20 @@ var Game = function (gameContainer) {
 
     var that = this;
 
+    $('#leader-form').on('submit',function(e){
+        e.preventDefault();
+        console.log($('#leader_name').val());
+        that.API.saveLeader({'username':$('#leader_name').val(),'score':40,"time":20}).done(function (data) {
+            console.log(data);
+
+        }).fail(function (response) {
+            // Display error
+            that.hideLoader();
+            console.log(response.responseText);
+            console.error('Could not save leader to database. ' + response.status + ' ' + response.statusText);
+        });
+    });
+
 
     // Init click events
     // Start game event

@@ -30,7 +30,4 @@ class GameController extends Controller
 
         return $this->json($response);
     }
-
-
-
 }

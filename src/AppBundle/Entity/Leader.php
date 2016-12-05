@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Leader
@@ -25,6 +26,7 @@ class Leader
      * @var string
      *
      * @ORM\Column(name="username", type="string", length=255)
+     * @Assert\Type("string")
      */
     private $username;
 
@@ -32,6 +34,8 @@ class Leader
      * @var int
      *
      * @ORM\Column(name="score", type="integer")
+     * @Assert\NotBlank()
+     * @Assert\Type("integer")
      */
     private $score;
 
@@ -39,6 +43,8 @@ class Leader
      * @var int
      *
      * @ORM\Column(name="time", type="integer")
+     * @Assert\NotBlank()
+     * @Assert\Type("integer")
      */
     private $time;
 
