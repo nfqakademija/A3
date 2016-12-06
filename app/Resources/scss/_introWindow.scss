@@ -11,8 +11,9 @@
   }
 
   @media #{$extraSmall}{
+    margin-top: 10px;
     img {
-      max-width: 90px;
+      max-width: 80px;
     }
   }
 }
@@ -23,7 +24,9 @@
   font-size: 14px;
 
   @media #{$extraSmall}{
-    display: none;
+    margin-top: 5px;
+    padding:10px;
+    font-size: 12px;
   }
 }
 

@@ -68,7 +68,9 @@ body {
   top: 0;
   right: 0;
   bottom: 0;
-  left: 0; }
+  left: 0;
+  overflow-y: auto;
+  overflow-x: hidden; }
 
 .back-arrow {
   -ms-flex-align: center;
@@ -157,6 +159,12 @@ body {
   position: relative;
   -ms-flex: 1 0 auto;
   flex: 1 0 auto;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   transition: background 0.3s; }
   .bottom-wrapper:before {
     display: block;
@@ -179,8 +187,11 @@ body {
         top: -9px; } }
 
 .bottom-wrapper__content {
-  height: 100%;
-  overflow-y: auto; }
+  overflow-y: auto;
+  margin-top: auto;
+  -ms-flex-item-align: end;
+  align-self: flex-end;
+  width: 100%; }
 
 header {
   height: 50px;
@@ -293,7 +304,10 @@ header {
     text-align: center; }
 
 .hidenResizer {
-  padding: 50px; }
+  display: none; }
+  @media (max-width: 320px) {
+    .hidenResizer {
+      padding: 60px; } }
 
 /**
 * Css for game intro wondow
@@ -307,8 +321,10 @@ header {
   .logo img {
     max-width: 170px; }
   @media (max-width: 320px) {
-    .logo img {
-      max-width: 90px; } }
+    .logo {
+      margin-top: 10px; }
+      .logo img {
+        max-width: 80px; } }
 
 .rules {
   margin-top: 30px;
@@ -316,7 +332,9 @@ header {
   font-size: 14px; }
   @media (max-width: 320px) {
     .rules {
-      display: none; } }
+      margin-top: 5px;
+      padding: 10px;
+      font-size: 12px; } }
 
 .btn--start-game {
   margin: 20px auto;
@@ -495,16 +513,18 @@ header {
   bottom: 0;
   left: 0;
   background: rgba(255, 255, 255, 0.9);
-  z-index: 3; }
+  z-index: 3;
+  overflow: hidden; }
 
 .game-starting-overlay--counting {
   position: absolute;
   top: 50%;
   width: 100%;
   margin-top: -140px;
-  color: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.1);
   text-align: center;
-  font-size: 280px; }
+  font-size: 280px;
+  z-index: 1; }
   .game-starting-overlay--counting.animate {
     animation: counter_fade 2s;
     animation-iteration-count: infinite; }
@@ -568,37 +588,16 @@ header {
   display: inline-block;
   height: 25px;
   width: 25px;
-  margin-right: 15px;
-  padding: 11px 5px; }
-
-.correct-icon:before, .correct-icon:after {
-  display: block;
-  content: '';
-  height: 2px;
-  background: #00B259;
-  transform-origin: center center; }
+  margin-right: 10px;
+  margin-left: 10px; }
 
 .correct-icon:before {
-  width: 10px;
-  transform: rotate(45deg) translateY(7px); }
-
-.correct-icon:after {
-  width: 20px;
-  transform: rotate(-45deg); }
-
-.wrong-icon:before, .wrong-icon:after {
   display: block;
-  content: '';
-  height: 2px;
-  width: 20px;
-  background: #fe6875;
-  transform-origin: center center; }
+  content: '\2714'; }
 
 .wrong-icon:before {
-  transform: rotate(-45deg) translateX(-1px); }
-
-.wrong-icon:after {
-  transform: rotate(45deg) translateX(-1px); }
+  display: block;
+  content: '\2718'; }
 
 .time-holder, .answers-holder {
   font-weight: bold;

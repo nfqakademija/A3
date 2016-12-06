@@ -10681,7 +10681,7 @@ Game.prototype.initGame = function (gameType) {
         that.factsCount = that.facts.length;
 
         that.$gameMainFact.text(that.mainFact.name);
-        var fontSize = that.resizer(that.mainFact.name,that.$gameMainFact);
+        var fontSize = that.resizer(that.mainFact.name);
         that.$gameMainFact.css('font-size',fontSize);
 
         that.maxTime = 590;
@@ -10819,7 +10819,7 @@ Game.prototype.showNextQuestion = function () {
         this.$gameSecondaryFact.text(this.facts[this.qestionIndex].name);
         this.$gameQuestionCount.text((this.qestionIndex + 1) + '/' + this.factsCount);
 
-        var fontSize = this.resizer(this.facts[this.qestionIndex].name,this.$gameSecondaryFact);
+        var fontSize = this.resizer(this.facts[this.qestionIndex].name);
         this.$gameSecondaryFact.css('font-size',fontSize);
 
     } else {
@@ -10974,19 +10974,18 @@ Game.prototype.getNumberTitle = function (number, oneText, fewText, tensText) {
     return oneText;
 }
 
-Game.prototype.resizer = function(text,block){
-    var size;
+Game.prototype.resizer = function(text){
+    var size = 32;
     var desired_height = 120;
     var resizerBlock = $(".hidenResizer");
 
     resizerBlock.html(text);
-    resizerBlock.css("width", $(block).width());
-    resizerBlock.css("font-size", 40);
+    resizerBlock.css("width", $('.main-wrapper').width() - 100);
+    resizerBlock.css("font-size", size);
 
-    while(resizerBlock.height() > desired_height) {
+    while(resizerBlock.height() >= desired_height) {
         size = parseInt(resizerBlock.css("font-size"), 10);
         resizerBlock.css("font-size", size - 1);
-        console.log('Called resizer');
     }
 
     return size;

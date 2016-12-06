@@ -176,6 +176,7 @@
   left:0;
   background: rgba(#ffffff,0.9);
   z-index:3;
+  overflow: hidden;
   //display: none;
 }
 
@@ -184,10 +185,10 @@
   top: 50%;
   width: 100%;
   margin-top: -140px;
-  color: rgba(#000000, 0.2);
+  color: rgba(#000000, 0.1);
   text-align: center;
   font-size: 280px;
-
+  z-index: 1;
   &.animate {
     animation: counter_fade 2s;
     animation-iteration-count: infinite;
