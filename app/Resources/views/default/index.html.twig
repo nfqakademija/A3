@@ -6,105 +6,18 @@
             <a href="#" class="back-arrow"><span></span></a>
         </header>
 
-        <div class="screen screen--start">
-            <a href="" class="logo"><img src="{{ asset('assets/img/logo.png') }}" alt=""></a>
-            <div class="rules">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet commodi corporis delectus
-                deserunt, eligendi enim eos eum facere inventore ipsum magnam nulla numquam quasi qui rem suscipit
-                velit.
-                Debitis, dolorum.
-            </div>
-            <div class="bottom-wrapper">
-                <div class="bottom-wrapper__content">
-                    <a href="#" class="btn btn--start-game">Pradėti</a>
-                    <a href="#" class="btn btn--show-leaderboard">Žiūrėti geriausius</a>
-                </div>
-            </div>
-        </div>
+        {% include 'screens/introScreen.html.twig' %}
+        {% include 'screens/gameScreen.html.twig' %}
+        {% include 'screens/endScreen.html.twig' %}
 
-        <div class="screen screen--game">
-            <div class="game-status">
-                <div class="timer"><span class="time-icon"></span><span class="timer-content"></span></div>
-                <div class="question-count">2 / 20</div>
-            </div>
-            <div class="main-fact-section">
-                <div class="main-fact">
+        {% include 'parts/loader.html.twig' %}
 
-                </div>
-                <div class="description">įvyko anksčiau ar vėliau negu</div>
-            </div>
-            <div class="bottom-wrapper">
-                <div class="socondary-fact">
+        {% include 'modals/leaderboard.html.twig' %}
+        {% include 'modals/quitGame.html.twig' %}
+        {% include 'modals/fullDetails.html.twig' %}
 
-                </div>
-                <div class="bottom-buttons">
-                    <a href="" class="btn btn--before">Anksčiau</a>
-                    <a href="" class="btn btn--after">Vėliau</a>
-                </div>
-            </div>
-            <div class="game-starting-overlay">
-                <div class="game-starting-overlay--counting">
-                    3
-                </div>
-            </div>
-        </div>
-
-        <div class="screen screen--end">
-            <h2>Sveikiname!</h2>
-            <div class="game-end-text">
-                Per
-                <span class="time-holder"></span> atsakėte
-                <span class="answers-holder"></span>.
-            </div>
-
-            <div class="end-game-buttons">
-                <div class="register-leader">
-                    <form action="post" id="leader-form" name="leader_form">
-                        <input type="text" name="leader_name" id="leader_name" placeholder="Naudotojo vardas">
-                        <input type="submit" value="Registruoti" name="leader_form" class="btn">
-                    </form>
-                </div>
-                <a href="" class="btn restart-game">Žaisti dar kartą</a>
-                <a href="" class="btn go-to-main">Grįžti į pražią</a>
-            </div>
-
-
-
-            <div class="bottom-wrapper">
-                <h3 class="bottom-wrapper--header">Pasitikrink atsakymus</h3>
-                <div class="results-holder">
-                    <ul class="results">
-
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="loader">
-            <div class="loader-elem">
-                <span class="load-circle"></span><span class="load-circle"></span><span class="load-circle"></span>
-                <div class="loader-text"></div>
-            </div>
-        </div>
-        <div class="quit-modal">
-            <div class="quit-modal--holder">
-                <div class="quit-modal--question">Ar tikrai norite nutraukti žaidimą?</div>
-                <div class="quit-modal--buttons">
-                    <a href="" class="btn quit-yes">Taip</a>
-                    <a href="" class="btn quit-no">Ne</a>
-                </div>
-            </div>
-        </div>
-        <div class="modal modal--full-details">
-            <a href="" class="close-full-details">&times;</a>
-            <header class="full-details-title"></header>
-            <div class="full-details-content">
-
-            </div>
-        </div>
-
-        <div class="modal modal--leaderboard">
-            <a href="" class="close-leaderboard">&times;</a>
-        </div>
     </div>
-    
+
+    {% include 'parts/resizer.html.twig' %}
 
 {% endblock %}
