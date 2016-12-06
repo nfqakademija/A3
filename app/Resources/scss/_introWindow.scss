@@ -5,24 +5,46 @@
 .logo {
   display: block;
   margin-top: 30px;
+
   img {
-    max-width: 200px;
+    max-width: 170px;
+  }
+
+  @media #{$extraSmall}{
+    img {
+      max-width: 90px;
+    }
   }
 }
 
 .rules {
   margin-top: 30px;
   padding: 20px 100px;
+  font-size: 14px;
+
+  @media #{$extraSmall}{
+    display: none;
+  }
 }
 
 .btn--start-game {
   margin: 20px auto;
   padding: 20px 80px;
   font-size: 32px;
+
+  @media #{$extraSmall}{
+    padding: 10px 20px;
+    font-size: 18px;
+  }
 }
 .btn--show-leaderboard{
   font-size: 16px;
   margin-bottom: 30px;
+
+  @media #{$extraSmall}{
+    padding: 5px 10px;
+    font-size: 14px;
+  }
 }
 
 .icon{
@@ -31,6 +53,11 @@
   width: 30px;
   vertical-align: middle;
   opacity:0.9;
+
+  @media #{$extraSmall}{
+    height:20px;
+    width: 20px;
+  }
 }
 .icon-leader{
   background: url(../img/icon-leader.png) center center no-repeat;

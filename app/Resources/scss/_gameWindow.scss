@@ -15,10 +15,12 @@
 .timer {
   padding-top: 4px;
   vertical-align: top;
-  height:32px;
-  line-height: 32px;
-  float: left;
 
+  float: left;
+  @media #{$extraSmall}{
+    height:16px;
+    line-height: 16px;
+  }
   &.allert {
     color: #fe1111;
   }
@@ -52,6 +54,22 @@
     background: #333333;
     transform: translateX(15px) translateY(14px);
   }
+
+  @media #{$extraSmall}{
+    height:16px;
+    width:16px;
+    border-radius: 8px;
+
+    &:before{
+      height:5px;
+      transform: translateX(7px) translateY(2px);
+    }
+
+    &:after{
+      width: 3px;
+      transform: translateX(7px) translateY(7px);
+    }
+  }
 }
 
 .timer-content{
@@ -68,6 +86,10 @@
   display: inline-block;
   font-size: 30px;
   font-weight: 300;
+
+  @media #{$extraSmall}{
+    font-size: 16px;
+  }
 }
 
 .main-fact-section{
@@ -77,6 +99,11 @@
   border-radius: 3px;
   position: relative;
   z-index: 4;
+
+  @media #{$extraSmall}{
+    padding:10px;
+    margin: 10px;
+  }
 }
 .main-fact {
   font-size: 30px;
@@ -84,12 +111,22 @@
   color: #01AF98;
   text-align: center;
   padding: 40px;
+
+  @media #{$extraSmall}{
+    padding:10px;
+    font-size: 20px;
+    font-weight: bold;
+  }
 }
 
 .description {
   font-style: italic;
   color: #212121;
   text-align: center;
+
+  @media #{$extraSmall}{
+    font-size: 14px;
+  }
 }
 
 .socondary-fact {
@@ -101,12 +138,22 @@
   text-align: center;
   font-weight: 400;
   margin-bottom: 20px;
+
+  @media #{$extraSmall}{
+    font-size: 18px;
+    padding: 10px;
+  }
 }
 
 .btn--before, .btn--after {
   width: 48%;
   text-align: center;
   margin-bottom: 30px;
+
+  @media #{$extraSmall}{
+    font-size: 16px;
+    padding: 5px;
+  }
 }
 
 .btn--after {

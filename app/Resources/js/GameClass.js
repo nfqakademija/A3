@@ -198,7 +198,11 @@ Game.prototype.initGame = function (gameType) {
         // Set questions array
         that.facts = data.questions;
         that.factsCount = that.facts.length;
+
         that.$gameMainFact.text(that.mainFact.name);
+        var fontSize = that.resizer(that.mainFact.name,that.$gameMainFact);
+        that.$gameMainFact.css('font-size',fontSize);
+
         that.maxTime = 590;
         that.isPlaying = true;
         that.$startScreen.hide();
@@ -333,6 +337,9 @@ Game.prototype.showNextQuestion = function () {
         // Display new question
         this.$gameSecondaryFact.text(this.facts[this.qestionIndex].name);
         this.$gameQuestionCount.text((this.qestionIndex + 1) + '/' + this.factsCount);
+
+        var fontSize = this.resizer(this.facts[this.qestionIndex].name,this.$gameSecondaryFact);
+        this.$gameSecondaryFact.css('font-size',fontSize);
 
     } else {
         this.endGame();
@@ -485,3 +492,21 @@ Game.prototype.getNumberTitle = function (number, oneText, fewText, tensText) {
 
     return oneText;
 }
+
+Game.prototype.resizer = function(text,block){
+    var size;
+    var desired_height = 120;
+    var resizerBlock = $(".hidenResizer");
+
+    resizerBlock.html(text);
+    resizerBlock.css("width", $(block).width());
+    resizerBlock.css("font-size", 40);
+
+    while(resizerBlock.height() > desired_height) {
+        size = parseInt(resizerBlock.css("font-size"), 10);
+        resizerBlock.css("font-size", size - 1);
+        console.log('Called resizer');
+    }
+
+    return size;
+};
