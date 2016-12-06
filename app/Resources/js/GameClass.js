@@ -403,6 +403,8 @@ Game.prototype.endGame = function () {
         if (data.is_better == true){
             that.$leaderForm.on('submit', function (e) {
                 e.preventDefault();
+                console.log(sha256('labas'));
+
                 that.showLoader('Saugomas jūsų rezultatas. Prašome palaukti.');
                 that.API.saveLeader({
                     'username': $('#leader_name').val(),
