@@ -71,7 +71,7 @@
 }
 
 .main-fact-section{
-  padding:20px;
+  padding:10px 20px;
   background: rgba(darken($light_gray,20%),0.3);
   margin: 10px 20px;
   border-radius: 3px;
@@ -79,7 +79,7 @@
   z-index: 4;
 }
 .main-fact {
-  font-size: 50px;
+  font-size: 30px;
   font-weight: 300;
   color: #01AF98;
   text-align: center;
@@ -94,14 +94,13 @@
 
 .socondary-fact {
   width: 100%;
-  font-size: 60px;
+  font-size: 40px;
   color: #EDE9E0;
   border: solid 1px rgba(#DDDDDD, 0.2);
-  padding: 40px;
+  padding: 20px;
   text-align: center;
-  text-transform: uppercase;
   font-weight: 400;
-  margin-bottom: 80px;
+  margin-bottom: 20px;
 }
 
 .btn--before, .btn--after {

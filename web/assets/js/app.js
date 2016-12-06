@@ -10866,12 +10866,15 @@ Game.prototype.endGame = function () {
             // Show that the answer was wrong
             $resultLine.addClass('wrong');
         }
-        var $moreBtn = $('<a href="#" class="btn btn--more-details" data-fact_id="' + fact.id + '">Skaityti daugiau</a>');
-        $moreBtn.on('click', function (e) {
-            e.preventDefault();
-            that.showDetails($(this));
-        });
-        $resultLine.append($moreBtn);
+
+        if(fact.has_details == true) {
+            var $moreBtn = $('<a href="#" class="btn btn--more-details" data-fact_id="' + fact.id + '">Skaityti daugiau</a>');
+            $moreBtn.on('click', function (e) {
+                e.preventDefault();
+                that.showDetails($(this));
+            });
+            $resultLine.append($moreBtn);
+        }
 
         that.$endGameResults.append($resultLine);
     });
