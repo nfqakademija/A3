@@ -59,8 +59,10 @@ var Game = function (gameContainer) {
     this.$endGameTime = $('.time-holder');
     this.$endGameAnswers = $('.answers-holder');
     this.$endGameResults = $('.results');
+    this.$leaderForm = $('#leader-form');
 
     var that = this;
+
 
 
     // Init click events
@@ -121,6 +123,44 @@ var Game = function (gameContainer) {
     this.$closeDetailsWiev.on('click', function (e) {
         e.preventDefault();
         that.$fullDetailsScreen.fadeOut();
+    });
+
+    $('.btn--show-leaderboard').on('click',function(e){
+        e.preventDefault();
+        that.showLoader('Gaunama informacija. Prašome palaukti.');
+        that.API.getLeaderboard().done(function (data) {
+            var list = $('<ul class="leaderboard"/>');
+            var li = $('<li class="header">' +
+                '<span class="leaderboard--place">Vieta</span>' +
+                '<span class="leaderboard--username">Vardas</span>' +
+                '<span class="leaderboard--score">Atsakyta klausimu</span>' +
+                '<span class="leaderboard--time">Sugaiso laiko</span>' +
+                '</li>');
+            list.append(li);
+            $.each(data.leaders,function(i,leader){
+                var li = $('<li>' +
+                    '<span class="leaderboard--place">'+(i+1)+'</span>' +
+                    '<span class="leaderboard--username">'+leader.username+'</span>' +
+                    '<span class="leaderboard--score">'+leader.score+'</span>' +
+                    '<span class="leaderboard--time">'+leader.time_spent+'</span>' +
+                    '</li>');
+                list.append(li);
+            });
+
+            $('.modal--leaderboard').append(list);
+            that.hideLoader();
+            $('.modal--leaderboard').fadeIn();
+        }).fail(function (response) {
+            // Display error
+            that.hideLoader();
+            console.error('Could not load leaderboard. ' + response.status + ' ' + response.statusText);
+        });
+
+    });
+
+    $('.close-leaderboard').on('click',function(e){
+        e.preventDefault();
+        $('.modal--leaderboard').fadeOut();
     });
 
 };
@@ -235,6 +275,10 @@ Game.prototype.initKeyboardControls = function () {
     });
 };
 
+Game.prototype.removeKeyboardControls = function () {
+    $(document).unbind('keyup');
+};
+
 Game.prototype.initTimer = function () {
     var that = this;
     this.timeLeft = this.maxTime;
@@ -322,11 +366,13 @@ Game.prototype.endGame = function () {
     // Get full details
     // Display results
 
-    this.showLoader('Skaičiuojami rezultatai. Prašome palaukti.')
+    this.showLoader('Skaičiuojami rezultatai. Prašome palaukti.');
+    this.removeKeyboardControls();
     this.isPlaying = false;
     var that = this;
     clearInterval(this.timer);
     var goodAnswersCount = 0;
+
 
     $.each(that.facts, function (i, fact) {
         var $resultLine = $('<li class="results--item"></li>');
@@ -350,30 +396,46 @@ Game.prototype.endGame = function () {
     });
 
     var timeSpent = this.maxTime - this.timeLeft;
-    var sec = 'sekundę';
 
-    if ((timeSpent > 1 && timeSpent < 10) || (timeSpent > 20 && timeSpent % 10 !== 0 && timeSpent % 10 > 1)) {
-        sec = 'sekundes';
-    } else if (timeSpent % 10 == 0 || timeSpent < 20 && timeSpent !== 1) {
-        sec = 'sekundžių';
-    }
+    this.API.isLeaderBetter(goodAnswersCount, timeSpent).done(function (data) {
+        that.hideLoader();
+        console.log(data);
+        if (data.is_better == true){
+            that.$leaderForm.on('submit', function (e) {
+                e.preventDefault();
+                that.showLoader('Saugomas jūsų rezultatas. Prašome palaukti.');
+                that.API.saveLeader({
+                    'username': $('#leader_name').val(),
+                    'score': goodAnswersCount,
+                    'time': timeSpent
+                }).done(function (data) {
+                    console.log(data);
+                    $('.register-leader').slideUp();
+                    that.hideLoader();
+                }).fail(function (response) {
+                    // Display error
+                    that.hideLoader();
+                    console.error('Could not save leader to database. ' + response.status + ' ' + response.statusText);
+                });
+            });
+            $('.register-leader').slideDown();
+        }
+    }).fail(function (response) {
+        // Display error
+        that.hideLoader();
+        console.error('Could not get better leaders count. ' + response.status + ' ' + response.statusText);
+    });
 
 
-    var answers = 'klausimą';
+    var sec = this.getNumberTitle(timeSpent, 'sekundę', 'sekundes', 'sekundžių');
+    var answers = this.getNumberTitle(goodAnswersCount, 'klausimą', 'klausimus', 'klausimų');
 
-    if ((goodAnswersCount > 1 && goodAnswersCount < 10)
-        || (goodAnswersCount > 20 && goodAnswersCount % 10 !== 0 && goodAnswersCount % 10 > 1)) {
-        answers = 'klausimus';
-    } else if (goodAnswersCount % 10 == 0 || goodAnswersCount < 20 && goodAnswersCount !== 1) {
-        answers = 'klausimų';
-    }
 
     this.$endGameTime.text(timeSpent + ' ' + sec);
     this.$endGameAnswers.text(goodAnswersCount + ' ' + answers);
 
     this.$gameScreen.fadeOut(10);
     this.$endGameScreen.fadeIn();
-    this.hideLoader();
 };
 
 Game.prototype.showDetails = function ($button) {
@@ -404,3 +466,17 @@ Game.prototype.resetGame = function () {
     this.$startScreen.fadeIn();
     this.hideQuitButton();
 };
+
+Game.prototype.getNumberTitle = function (number, oneText, fewText, tensText) {
+    if ((number > 1 && number < 10)
+        || (number > 20 && number % 10 !== 0 && number % 10 > 1)) {
+
+        return fewText;
+
+    } else if (number % 10 == 0 || number < 20 && number !== 1) {
+
+        return tensText;
+    }
+
+    return oneText;
+}

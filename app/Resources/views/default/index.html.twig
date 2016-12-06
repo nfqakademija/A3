@@ -16,6 +16,7 @@
             <div class="bottom-wrapper">
                 <div class="bottom-wrapper__content">
                     <a href="#" class="btn btn--start-game">Pradėti</a>
+                    <a href="#" class="btn btn--show-leaderboard">Žiūrėti geriausius</a>
                 </div>
             </div>
         </div>
@@ -56,9 +57,18 @@
             </div>
 
             <div class="end-game-buttons">
+                <div class="register-leader">
+                    <form action="post" id="leader-form" name="leader_form">
+                        <input type="text" name="leader_name" id="leader_name" placeholder="Naudotojo vardas">
+                        <input type="submit" value="Registruoti" name="leader_form" class="btn">
+                    </form>
+                </div>
                 <a href="" class="btn restart-game">Žaisti dar kartą</a>
                 <a href="" class="btn go-to-main">Grįžti į pražią</a>
             </div>
+
+
+
             <div class="bottom-wrapper">
                 <h3 class="bottom-wrapper--header">Pasitikrink atsakymus</h3>
                 <div class="results-holder">
@@ -89,6 +99,10 @@
             <div class="full-details-content">
 
             </div>
+        </div>
+
+        <div class="modal modal--leaderboard">
+            <a href="" class="close-leaderboard">&times;</a>
         </div>
     </div>
     

@@ -154,7 +154,8 @@ header {
   font-weight: 300;
   text-transform: uppercase;
   padding: 12px 20px;
-  transition: all .2s; }
+  transition: all .2s;
+  border: none; }
   .btn:hover {
     transform: translateY(-3px);
     box-shadow: 0px 12px 18px -9px rgba(0, 0, 0, 0.26); }
@@ -182,7 +183,7 @@ header {
 .quit-modal--question {
   padding: 40px; }
 
-.modal--full-details {
+.modal--full-details, .modal--leaderboard {
   position: absolute;
   top: 0;
   right: 0;
@@ -192,13 +193,13 @@ header {
   z-index: 4;
   overflow-y: auto;
   display: none; }
-  .modal--full-details header {
+  .modal--full-details header, .modal--leaderboard header {
     font-size: 22px;
     color: #DDDDDD;
     padding: 10px;
     padding-right: 40px; }
 
-.close-full-details {
+.close-full-details, .close-leaderboard {
   display: block;
   color: #fe6875;
   font-size: 50px;
@@ -213,6 +214,32 @@ header {
 .full-details-content {
   padding: 20px;
   color: #DDDDDD; }
+
+.leaderboard {
+  margin: 0;
+  padding: 40px;
+  list-style: none;
+  width: 100%; }
+  .leaderboard li {
+    list-style: none;
+    color: #DDDDDD;
+    width: 100%;
+    padding: 10px;
+    border-bottom: solid 1px rgba(221, 221, 221, 0.4); }
+  .leaderboard .leaderboard--place {
+    width: 8%;
+    display: inline-block; }
+  .leaderboard .leaderboard--username {
+    width: 52%;
+    display: inline-block; }
+  .leaderboard .leaderboard--score {
+    width: 20%;
+    display: inline-block;
+    text-align: center; }
+  .leaderboard .leaderboard--time {
+    width: 20%;
+    display: inline-block;
+    text-align: center; }
 
 /**
 * Css for game intro wondow
@@ -467,5 +494,21 @@ header {
     padding: 8px;
     vertical-align: middle;
     margin: 10px; }
+
+.register-leader {
+  margin: 20px auto;
+  display: none; }
+  .register-leader .btn {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    margin-left: 0;
+    padding: 10px; }
+
+#leader_name {
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  border: none;
+  padding: 10px;
+  display: inline-block; }
 
 /*# sourceMappingURL=maps/style.css.map */
