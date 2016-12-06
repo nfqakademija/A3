@@ -42,6 +42,7 @@ gulp.task('js', function() {
 
         // Grab all js scripts
         './node_modules/jquery/dist/jquery.js',
+        './node_modules/js-sha256/src/sha256.js',
         './app/Resources/js/**/*.js'
     ])
         .pipe(sourcemaps.init())
