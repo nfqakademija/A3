@@ -4,6 +4,14 @@
 var Game = function (gameContainer) {
     this.API = new API();
 
+
+    this.ScreenPicker = new ScreenPicker([
+        new Screen('intro','.screen--start'),
+        new Screen('game','.screen--game'),
+        new Screen('end','.screen--end')
+    ]);
+
+
     // Facts array
     this.facts = [];
     this.factsCount = 0;
@@ -32,9 +40,6 @@ var Game = function (gameContainer) {
     this.$closeDetailsWiev = $('.close-full-details');
 
     // Screens
-    this.$startScreen = $('.screen--start');
-    this.$gameScreen = $('.screen--game');
-    this.$endGameScreen = $('.screen--end');
     this.$fullDetailsScreen = $('.modal--full-details');
 
     // Full details
@@ -104,7 +109,6 @@ var Game = function (gameContainer) {
     this.$restartGame.on('click', function (e) {
         e.preventDefault();
         that.$endGameResults.html('');
-        that.$endGameScreen.fadeOut(10);
         that.initGame();
     });
 
@@ -131,19 +135,6 @@ Game.prototype.initGame = function (gameType) {
     this.qestionIndex = 0;
     this.facts = [];
 
-    // Load stubs data
-    /* var allStubs = new Stubs();
-     this.mainFact = allStubs.getMainFact();
-     this.facts = allStubs.getAllFacts();
-
-     that.factsCount = that.facts.length;
-     that.$gameMainFact.text(that.mainFact.name);
-     that.showNextQuestion();
-     that.$startScreen.fadeOut();
-     that.$gameScreen.fadeIn();
-     this.maxTime = 50;
-     that.initTimer();*/
-
 
     // Get game facts
 
@@ -162,13 +153,14 @@ Game.prototype.initGame = function (gameType) {
 
         that.maxTime = 590;
         that.isPlaying = true;
-        that.$startScreen.hide();
-        that.$gameScreen.fadeIn();
+
         that.Loader.hide();
         that.secondsToWait = 3;
         that.setBeforeGameCounter();
         that.showBeforeStartScreen();
         that.GameQuiter.showBackBtn();
+
+        that.ScreenPicker.showScreen('game');
 
     }).fail(function (response) {
         // Display error
@@ -359,8 +351,7 @@ Game.prototype.endGame = function () {
     this.$endGameTime.text(timeSpent + ' ' + sec);
     this.$endGameAnswers.text(goodAnswersCount + ' ' + answers);
 
-    this.$gameScreen.fadeOut(10);
-    this.$endGameScreen.fadeIn();
+    this.ScreenPicker.showScreen('end');
 };
 
 Game.prototype.showDetails = function ($button) {
@@ -386,9 +377,9 @@ Game.prototype.resetGame = function () {
     this.isPlaying = false;
     this.facts = [];
     this.$endGameResults.html('');
-    this.$endGameScreen.fadeOut(10);
-    this.$gameScreen.fadeOut(10);
-    this.$startScreen.fadeIn();
+
     this.GameQuiter.hideBackBtn();
+
+    this.ScreenPicker.showScreen('intro');
 };
 
