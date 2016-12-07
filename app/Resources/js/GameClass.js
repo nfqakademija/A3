@@ -63,6 +63,7 @@ var Game = function (gameContainer) {
     this.LeaderRegistrator = new LeaderRegistrator(this.Alerter, this.Loader, this.API);
     this.Leaderboard = new Leaderboard(this.API, this.Loader);
     this.resizer = new FontResizer();
+    this.NumberTitleGenerator = new NumberText();
 
     var that = this;
 
@@ -382,8 +383,8 @@ Game.prototype.endGame = function () {
     });
 
 
-    var sec = this.getNumberTitle(timeSpent, 'sekundę', 'sekundes', 'sekundžių');
-    var answers = this.getNumberTitle(goodAnswersCount, 'klausimą', 'klausimus', 'klausimų');
+    var sec = this.NumberTitleGenerator.getText(timeSpent, 'sekundę', 'sekundes', 'sekundžių');
+    var answers = this.NumberTitleGenerator.getText(goodAnswersCount, 'klausimą', 'klausimus', 'klausimų');
 
 
     this.$endGameTime.text(timeSpent + ' ' + sec);
@@ -422,16 +423,3 @@ Game.prototype.resetGame = function () {
     this.hideQuitButton();
 };
 
-Game.prototype.getNumberTitle = function (number, oneText, fewText, tensText) {
-    if ((number > 1 && number < 10)
-        || (number > 20 && number % 10 !== 0 && number % 10 > 1)) {
-
-        return fewText;
-
-    } else if (number % 10 == 0 || number < 20 && number !== 1) {
-
-        return tensText;
-    }
-
-    return oneText;
-}
