@@ -44,8 +44,7 @@ var Game = function (gameContainer) {
     this.$fullDetailsContent = $('.full-details-content');
 
     // Loading screen
-    this.$loader = $('.loader');
-    this.$loaderText = $('.loader-text');
+    this.Loader = Loader();
 
     // Game objects
     this.$gameTimer = $('.timer-content');
@@ -59,10 +58,12 @@ var Game = function (gameContainer) {
     this.$endGameTime = $('.time-holder');
     this.$endGameAnswers = $('.answers-holder');
     this.$endGameResults = $('.results');
-    this.$leaderForm = $('#leader-form');
 
     this.Alerter = new Alert();
+    this.LeaderRegistrator = new LeaderRegistrator(this.Alerter, this.Loader, this.API);
+
     var that = this;
+
 
 
 
@@ -149,11 +150,11 @@ var Game = function (gameContainer) {
             });
 
             $('.leaderboard-content').html(list);
-            that.hideLoader();
+            that.Loader.hide();
             $('.modal--leaderboard').fadeIn();
         }).fail(function (response) {
             // Display error
-            that.hideLoader();
+            that.Loader.hide();
             console.error('Could not load leaderboard. ' + response.status + ' ' + response.statusText);
         });
 
@@ -169,7 +170,7 @@ var Game = function (gameContainer) {
 Game.prototype.initGame = function (gameType) {
     var that = this;
     // Display loader
-    this.showLoader('Ruošiamas žaidimas. Prašome palaukti.');
+    this.Loader.show('Ruošiamas žaidimas. Prašome palaukti.');
 
     // Reset questions index
     this.qestionIndex = 0;
@@ -208,7 +209,7 @@ Game.prototype.initGame = function (gameType) {
         that.isPlaying = true;
         that.$startScreen.hide();
         that.$gameScreen.fadeIn();
-        that.hideLoader();
+        that.Loader.hide();
         that.secondsToWait = 3;
         that.setBeforeGameCounter();
         that.showBeforeStartScreen();
@@ -216,7 +217,7 @@ Game.prototype.initGame = function (gameType) {
 
     }).fail(function (response) {
         // Display error
-        that.hideLoader();
+        that.Loader.hide();
         console.error('Could not load game data. ' + response.status + ' ' + response.statusText);
     });
 
@@ -224,7 +225,7 @@ Game.prototype.initGame = function (gameType) {
 
 
 Game.prototype.startGame = function () {
-    this.$leaderForm.unbind('submit');
+    this.LeaderRegistrator.dissable();
     this.showNextQuestion();
     this.initTimer();
     this.initKeyboardControls();
@@ -375,7 +376,7 @@ Game.prototype.endGame = function () {
     // Get full details
     // Display results
 
-    this.showLoader('Skaičiuojami rezultatai. Prašome palaukti.');
+    this.Loader.show('Skaičiuojami rezultatai. Prašome palaukti.');
     this.removeKeyboardControls();
     this.isPlaying = false;
     var that = this;
@@ -410,35 +411,16 @@ Game.prototype.endGame = function () {
     var timeSpent = this.maxTime - this.timeLeft;
 
     this.API.isLeaderBetter(goodAnswersCount, timeSpent).done(function (data) {
-        that.hideLoader();
+        that.Loader.hide();
 
         if (data.is_better == true){
-            that.$leaderForm.on('submit', function (e) {
-                e.preventDefault();
 
-                that.showLoader('Saugomas jūsų rezultatas. Prašome palaukti.');
-                that.API.saveLeader({
-                    'username': $('#leader_name').val(),
-                    'score': goodAnswersCount,
-                    'time': timeSpent
-                }).done(function (data) {
-                    $('.register-leader').slideUp();
-                    $('#leader_name').val('');
-                    that.$leaderForm.unbind('submit');
-                    that.hideLoader();
-                }).fail(function (response) {
-                    // Display error
+            that.LeaderRegistrator.init();
 
-                    that.Alerter.show('Jūsų rezultato išsaugoti nepavyko.');
-                    that.hideLoader();
-                    console.error('Could not save leader to database. ' + response.status + ' ' + response.statusText);
-                });
-            });
-            $('.register-leader').slideDown();
         }
     }).fail(function (response) {
         // Display error
-        that.hideLoader();
+        that.Loader.hide();
         console.error('Could not get better leaders count. ' + response.status + ' ' + response.statusText);
     });
 
@@ -457,12 +439,12 @@ Game.prototype.endGame = function () {
 Game.prototype.showDetails = function ($button) {
     var that = this;
     var factId = $button.data('fact_id');
-    this.showLoader('gauname fakto informaciją');
+    this.Loader.show('gauname fakto informaciją');
     this.API.loadFactsDetailsDataById(factId).done(function (data) {
         that.$fullDetailsTitle.text(data.title);
         that.$fullDetailsContent.html(data.content);
         that.$fullDetailsScreen.fadeIn();
-        that.hideLoader();
+        that.Loader.hide();
     }).fail(function (response) {
         console.error('Could not load full details data. ' + response.status + ' ' + response.statusText);
     });
