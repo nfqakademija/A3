@@ -223,6 +223,7 @@ Game.prototype.initGame = function (gameType) {
 
 
 Game.prototype.startGame = function () {
+    this.$leaderForm.unbind('submit');
     this.showNextQuestion();
     this.initTimer();
     this.initKeyboardControls();
