@@ -134,7 +134,7 @@ var Game = function (gameContainer) {
                 '<span class="leaderboard--place">Vieta</span>' +
                 '<span class="leaderboard--username">Vardas</span>' +
                 '<span class="leaderboard--score">Atsakyta klausimu</span>' +
-                '<span class="leaderboard--time">Sugaiso laiko</span>' +
+                '<span class="leaderboard--time">Sugaišo laiko</span>' +
                 '</li>');
             list.append(li);
             $.each(data.leaders,function(i,leader){
@@ -147,7 +147,7 @@ var Game = function (gameContainer) {
                 list.append(li);
             });
 
-            $('.modal--leaderboard').append(list);
+            $('.leaderboard-content').html(list);
             that.hideLoader();
             $('.modal--leaderboard').fadeIn();
         }).fail(function (response) {

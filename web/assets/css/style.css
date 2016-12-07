@@ -303,6 +303,14 @@ header {
     display: inline-block;
     text-align: center; }
 
+.leaderboard-content {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow-y: auto; }
+
 .hidenResizer {
   display: none; }
   @media (max-width: 320px) {
