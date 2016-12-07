@@ -61,6 +61,8 @@ var Game = function (gameContainer) {
 
     this.Alerter = new Alert();
     this.LeaderRegistrator = new LeaderRegistrator(this.Alerter, this.Loader, this.API);
+    this.Leaderboard = new Leaderboard(this.API, this.Loader);
+    this.resizer = new FontResizer();
 
     var that = this;
 
@@ -127,43 +129,7 @@ var Game = function (gameContainer) {
         that.$fullDetailsScreen.fadeOut();
     });
 
-    $('.btn--show-leaderboard').on('click',function(e){
-        e.preventDefault();
-        that.showLoader('Gaunama informacija. Prašome palaukti.');
-        that.API.getLeaderboard().done(function (data) {
-            var list = $('<ul class="leaderboard"/>');
-            var li = $('<li class="header">' +
-                '<span class="leaderboard--place">Vieta</span>' +
-                '<span class="leaderboard--username">Vardas</span>' +
-                '<span class="leaderboard--score">Atsakyta klausimu</span>' +
-                '<span class="leaderboard--time">Sugaišo laiko</span>' +
-                '</li>');
-            list.append(li);
-            $.each(data.leaders,function(i,leader){
-                var li = $('<li>' +
-                    '<span class="leaderboard--place">'+(i+1)+'</span>' +
-                    '<span class="leaderboard--username">'+leader.username+'</span>' +
-                    '<span class="leaderboard--score">'+leader.score+'</span>' +
-                    '<span class="leaderboard--time">'+leader.time_spent+'</span>' +
-                    '</li>');
-                list.append(li);
-            });
 
-            $('.leaderboard-content').html(list);
-            that.Loader.hide();
-            $('.modal--leaderboard').fadeIn();
-        }).fail(function (response) {
-            // Display error
-            that.Loader.hide();
-            console.error('Could not load leaderboard. ' + response.status + ' ' + response.statusText);
-        });
-
-    });
-
-    $('.close-leaderboard').on('click',function(e){
-        e.preventDefault();
-        $('.modal--leaderboard').fadeOut();
-    });
 
 };
 
@@ -202,8 +168,8 @@ Game.prototype.initGame = function (gameType) {
         that.factsCount = that.facts.length;
 
         that.$gameMainFact.text(that.mainFact.name);
-        var fontSize = that.resizer(that.mainFact.name);
-        that.$gameMainFact.css('font-size',fontSize);
+
+        this.resizer.setFontSize(that.$gameMainFact, that.mainFact.name);
 
         that.maxTime = 590;
         that.isPlaying = true;
@@ -310,15 +276,6 @@ Game.prototype.checkTime = function () {
 
 };
 
-Game.prototype.showLoader = function (loader_text) {
-    this.$loaderText.text(loader_text);
-    this.$loader.fadeIn();
-};
-
-Game.prototype.hideLoader = function () {
-    this.$loader.fadeOut();
-};
-
 Game.prototype.showBeforeStartScreen = function () {
     this.$gameWaitScreen.fadeIn();
 };
@@ -341,8 +298,8 @@ Game.prototype.showNextQuestion = function () {
         this.$gameSecondaryFact.text(this.facts[this.qestionIndex].name);
         this.$gameQuestionCount.text((this.qestionIndex + 1) + '/' + this.factsCount);
 
-        var fontSize = this.resizer(this.facts[this.qestionIndex].name);
-        this.$gameSecondaryFact.css('font-size',fontSize);
+        this.resizer.setFontSize(this.$gameSecondaryFact, this.facts[this.qestionIndex].name);
+
 
     } else {
         this.endGame();
@@ -478,20 +435,3 @@ Game.prototype.getNumberTitle = function (number, oneText, fewText, tensText) {
 
     return oneText;
 }
-
-Game.prototype.resizer = function(text){
-    var size = 32;
-    var desired_height = 120;
-    var resizerBlock = $(".hidenResizer");
-
-    resizerBlock.html(text);
-    resizerBlock.css("width", $('.main-wrapper').width() - 100);
-    resizerBlock.css("font-size", size);
-
-    while(resizerBlock.height() >= desired_height) {
-        size = parseInt(resizerBlock.css("font-size"), 10);
-        resizerBlock.css("font-size", size - 1);
-    }
-
-    return size;
-};
