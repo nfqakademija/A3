@@ -61,6 +61,7 @@ var Game = function (gameContainer) {
     this.$endGameResults = $('.results');
     this.$leaderForm = $('#leader-form');
 
+    this.Alerter = new Alert();
     var that = this;
 
 
@@ -410,11 +411,10 @@ Game.prototype.endGame = function () {
 
     this.API.isLeaderBetter(goodAnswersCount, timeSpent).done(function (data) {
         that.hideLoader();
-        console.log(data);
+
         if (data.is_better == true){
             that.$leaderForm.on('submit', function (e) {
                 e.preventDefault();
-                console.log(sha256('labas'));
 
                 that.showLoader('Saugomas jūsų rezultatas. Prašome palaukti.');
                 that.API.saveLeader({
@@ -422,11 +422,14 @@ Game.prototype.endGame = function () {
                     'score': goodAnswersCount,
                     'time': timeSpent
                 }).done(function (data) {
-                    console.log(data);
                     $('.register-leader').slideUp();
+                    $('#leader_name').val('');
+                    that.$leaderForm.unbind('submit');
                     that.hideLoader();
                 }).fail(function (response) {
                     // Display error
+
+                    that.Alerter.show('Jūsų rezultato išsaugoti nepavyko.');
                     that.hideLoader();
                     console.error('Could not save leader to database. ' + response.status + ' ' + response.statusText);
                 });

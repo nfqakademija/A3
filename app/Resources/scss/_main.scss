@@ -251,7 +251,18 @@ header {
     box-shadow: 0px 12px 18px -9px rgba(0, 0, 0, 0.26);
   }
 }
-
+.modal{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+  background: rgba(darken($dark_blue, 40%), 0.95);
+  text-align: center;
+  color: $light_gray;
+  display: none;
+}
 .quit-modal {
   position: absolute;
   top: 0;
@@ -269,13 +280,13 @@ header {
   }
 }
 
-.quit-modal--holder {
+.quit-modal--holder, .modal-alert--holder {
   position: absolute;
   top: 40%;
   width: 100%;
 }
 
-.quit-modal--question {
+.quit-modal--question, .modal-alert--message {
   padding: 40px;
 }
 
@@ -368,4 +379,8 @@ header {
   @media #{$extraSmall}{
     padding: 60px;
   }
+}
+
+.modal-alert{
+
 }
