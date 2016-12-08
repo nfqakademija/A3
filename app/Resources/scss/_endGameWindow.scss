@@ -23,6 +23,11 @@
     text-transform: uppercase;
     font-weight: 200;
   }
+
+  .bottom-wrapper__content{
+    margin-top: 10px;
+    align-self: flex-start;
+  }
 }
 
 .results--item {
@@ -108,21 +113,27 @@
 }
 
 .register-leader {
+  border-radius: 10px;
+  padding: 20px;
+  border:solid 1px darken($light_gray,10%);
   margin: 20px auto;
   display: none;
-
+  max-width: 400px;
+  width: 90%;
   .btn {
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
     margin-left: 0;
+    width: 100%;
     padding: 10px;
+  }
+  small{
+    display: block;
   }
 }
 
 #leader_name {
-  border-bottom-left-radius: 3px;
-  border-top-left-radius: 3px;
+  border-radius: 3px;
   border: none;
+  width: 100%;
   padding: 10px;
   display: inline-block;
 }

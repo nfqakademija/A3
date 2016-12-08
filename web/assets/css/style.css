@@ -16,6 +16,26 @@ html {
 * {
   box-sizing: border-box; }
 
+::-webkit-scrollbar {
+  width: 10px; }
+
+::-webkit-scrollbar-thumb {
+  background: #577793; }
+
+.noselect, * {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                  not supported by any browser */ }
+
 body {
   background: url(../img/main-bg.jpg) center center no-repeat;
   background-size: cover;
@@ -222,6 +242,18 @@ header {
     transform: translateY(-3px);
     box-shadow: 0px 12px 18px -9px rgba(0, 0, 0, 0.26); }
 
+.modal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.95);
+  text-align: center;
+  color: #DDDDDD;
+  display: none; }
+
 .quit-modal {
   position: absolute;
   top: 0;
@@ -237,12 +269,12 @@ header {
     margin: 10px;
     width: 80px; }
 
-.quit-modal--holder {
+.quit-modal--holder, .modal-alert--holder {
   position: absolute;
   top: 40%;
   width: 100%; }
 
-.quit-modal--question {
+.quit-modal--question, .modal-alert--message {
   padding: 40px; }
 
 .modal--full-details, .modal--leaderboard {
@@ -303,6 +335,14 @@ header {
     display: inline-block;
     text-align: center; }
 
+.leaderboard-content {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow-y: auto; }
+
 .hidenResizer {
   display: none; }
   @media (max-width: 320px) {
@@ -314,6 +354,11 @@ header {
 **/
 .screen--start {
   text-align: center; }
+  .screen--start .bottom-wrapper__content {
+    margin-top: 10px;
+    -ms-flex-item-align: center;
+    -ms-grid-row-align: center;
+    align-self: center; }
 
 .logo {
   display: block;
@@ -559,6 +604,10 @@ header {
     color: #01AF98;
     text-transform: uppercase;
     font-weight: 200; }
+  .screen--end .bottom-wrapper__content {
+    margin-top: 10px;
+    -ms-flex-item-align: start;
+    align-self: flex-start; }
 
 .results--item {
   text-align: left;
@@ -619,18 +668,24 @@ header {
     margin: 10px; }
 
 .register-leader {
+  border-radius: 10px;
+  padding: 20px;
+  border: solid 1px #c4c4c4;
   margin: 20px auto;
-  display: none; }
+  display: none;
+  max-width: 400px;
+  width: 90%; }
   .register-leader .btn {
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
     margin-left: 0;
+    width: 100%;
     padding: 10px; }
+  .register-leader small {
+    display: block; }
 
 #leader_name {
-  border-bottom-left-radius: 3px;
-  border-top-left-radius: 3px;
+  border-radius: 3px;
   border: none;
+  width: 100%;
   padding: 10px;
   display: inline-block; }
 
