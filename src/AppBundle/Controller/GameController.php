@@ -26,7 +26,7 @@ class GameController extends Controller
         $response = array();
         $response["root"] = $responseall['response_root'];
         $response["questions"] = $responseall['response_question'];
-
+        $response["time"] = $responseall['response_time'];
 
         return $this->json($response);
     }
