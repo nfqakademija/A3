@@ -28,6 +28,11 @@ class Leader
      * @ORM\Column(name="username", type="string", length=255)
      * @Assert\NotBlank()
      * @Assert\Type("string")
+     * @Assert\Regex("/[a-zA-Z0-9]*$/")
+     * @Assert\Length(
+     *     min = 2,
+     *     max = 50
+     * )
      */
     private $username;
 
