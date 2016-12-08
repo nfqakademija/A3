@@ -60,7 +60,6 @@ var Game = function (gameContainer) {
     // End game objects
     this.$endGameTime = $('.time-holder');
     this.$endGameAnswers = $('.answers-holder');
-    this.$endGameResults = $('.results');
 
     this.Alerter = new Alert();
     this.LeaderRegistrator = new LeaderRegistrator(this.Alerter, this.Loader, this.API);
@@ -69,6 +68,7 @@ var Game = function (gameContainer) {
     this.NumberTitleGenerator = new NumberText();
 
     this.GameQuiter = new QuitGame(this.quitToMainScreen);
+    this.gameResultsMaker = new GameResults();
 
     var that = this;
 
@@ -108,7 +108,7 @@ var Game = function (gameContainer) {
 
     this.$restartGame.on('click', function (e) {
         e.preventDefault();
-        that.$endGameResults.html('');
+        that.gameResultsMaker.resetResults();
         that.initGame();
     });
 
@@ -300,32 +300,9 @@ Game.prototype.endGame = function () {
     this.isPlaying = false;
     var that = this;
     clearInterval(this.timer);
-    var goodAnswersCount = 0;
 
-
-    $.each(that.facts, function (i, fact) {
-        var $resultLine = $('<li class="results--item"></li>');
-        $resultLine.text(fact.name);
-        $resultLine.prepend('<span class="correct-icon" />');
-        $resultLine.prepend('<span class="wrong-icon" />');
-        if (fact.answer_was_right) {
-            goodAnswersCount++;
-        } else {
-            // Show that the answer was wrong
-            $resultLine.addClass('wrong');
-        }
-
-        if(fact.has_details == true) {
-            var $moreBtn = $('<a href="#" class="btn btn--more-details" data-fact_id="' + fact.id + '">Skaityti daugiau</a>');
-            $moreBtn.on('click', function (e) {
-                e.preventDefault();
-                that.showDetails($(this));
-            });
-            $resultLine.append($moreBtn);
-        }
-
-        that.$endGameResults.append($resultLine);
-    });
+    this.gameResultsMaker.generateResults(this.facts);
+    var goodAnswersCount = gameResultsMaker.getGoodAnswersCount();
 
     var timeSpent = this.maxTime - this.timeLeft;
 
@@ -376,7 +353,7 @@ Game.prototype.resetGame = function () {
 
     this.isPlaying = false;
     this.facts = [];
-    this.$endGameResults.html('');
+    this.gameResultsMaker.resetResults();
 
     this.GameQuiter.hideBackBtn();
 
