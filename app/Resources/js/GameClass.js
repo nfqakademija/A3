@@ -47,7 +47,7 @@ var Game = function (gameContainer) {
     this.$fullDetailsContent = $('.full-details-content');
 
     // Loading screen
-    this.Loader = Loader();
+    this.Loader = new Loader();
 
     // Game objects
     this.$gameTimer = $('.timer-content');
@@ -134,8 +134,6 @@ Game.prototype.initGame = function (gameType) {
     // Reset questions index
     this.qestionIndex = 0;
     this.facts = [];
-
-
     // Get game facts
 
     this.API.loadGameData(gameType).done(function (data) {

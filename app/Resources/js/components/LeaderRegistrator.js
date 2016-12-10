@@ -50,5 +50,5 @@ LeaderRegistrator.prototype.init = function () {
 };
 
 LeaderRegistrator.prototype.dissable = function () {
-    that.$leaderForm.unbind('submit');
+    this.$form.unbind('submit');
 };

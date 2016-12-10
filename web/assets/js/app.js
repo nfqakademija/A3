@@ -10448,6 +10448,374 @@ return jQuery;
   }
 }(this));
 
+var Alert = function()
+{
+    this.$modal = $('.modal-alert');
+    this.$textHolder = $('.modal-alert--message');
+    this.$closeButton = $('.alert-ok');
+    this.timer;
+    this.timeToShow = 10; // In seconds
+
+    var that = this;
+
+    this.$closeButton.on('click',function(e){
+        e.preventDefault();
+        that.hide();
+    });
+};
+
+Alert.prototype.hide = function ()
+{
+    clearTimeout(this.timer);
+    this.$modal.fadeOut();
+};
+
+Alert.prototype.show = function(alertText)
+{
+    var that = this;
+    this.$textHolder.text(alertText);
+    this.$modal.fadeIn();
+    this.timer = setTimeout(function(){
+        that.hide();
+    }, this.timeToShow * 1000);
+};
+var GameResults = function (facts) {
+
+    this.goodAnswersCount = 0;
+    this.$endGameResults = $('.results');
+};
+
+GameResults.prototype.generateResults = function (facts) {
+    var that = this;
+    $.each(facts, function (i, fact) {
+        var $resultLine = $('<li class="results--item"></li>');
+        $resultLine.text(fact.name);
+        $resultLine.prepend('<span class="correct-icon" />');
+        $resultLine.prepend('<span class="wrong-icon" />');
+        if (fact.answer_was_right) {
+            that.goodAnswersCount++;
+        } else {
+            // Show that the answer was wrong
+            $resultLine.addClass('wrong');
+        }
+
+        if(fact.has_details == true) {
+            var $moreBtn = $('<a href="#" class="btn btn--more-details" data-fact_id="' + fact.id + '">Skaityti daugiau</a>');
+            $moreBtn.on('click', function (e) {
+                e.preventDefault();
+                that.showDetails($(this));
+            });
+            $resultLine.append($moreBtn);
+        }
+
+        that.$endGameResults.append($resultLine);
+    });
+};
+
+GameResults.prototype.resetResults = function () {
+    this.$endGameResults.html('');
+    this.goodAnswersCount = 0;
+};
+
+GameResults.prototype.getGoodAnswersCount = function () {
+    return this.goodAnswersCount;
+};
+var Leaderboard = function (API, Loader) {
+
+    this.$modal = $('.modal--leaderboard');
+    this.$listHolder = $('.leaderboard-content');
+    this.$showButton = $('.btn--show-leaderboard');
+    this.$closeButton = $('.close-leaderboard');
+
+    this.API = API;
+    this.Loader = Loader;
+
+    this.initClickEvents();
+};
+
+Leaderboard.prototype.initClickEvents = function () {
+
+    var that = this;
+
+    this.$showButton.on('click', function(e){
+        e.preventDefault();
+        that.load();
+    });
+
+    this.$closeButton.on('click', function(e){
+        e.preventDefault();
+        that.hide();
+    });
+};
+
+Leaderboard.prototype.load = function () {
+
+    var that = this;
+
+    this.Loader.show('Gaunama informacija. Prašome palaukti.');
+
+    this.API.getLeaderboard().done(function (data) {
+
+        var list = $('<ul class="leaderboard"/>');
+        var li = $('<li class="header">' +
+            '<span class="leaderboard--place">Vieta</span>' +
+            '<span class="leaderboard--username">Vardas</span>' +
+            '<span class="leaderboard--score">Atsakyta klausimu</span>' +
+            '<span class="leaderboard--time">Sugaišo laiko</span>' +
+            '</li>');
+        list.append(li);
+        $.each(data.leaders,function(i,leader){
+            var li = $('<li>' +
+                '<span class="leaderboard--place">'+(i+1)+'</span>' +
+                '<span class="leaderboard--username">'+leader.username+'</span>' +
+                '<span class="leaderboard--score">'+leader.score+'</span>' +
+                '<span class="leaderboard--time">'+leader.time_spent+'</span>' +
+                '</li>');
+            list.append(li);
+        });
+
+        that.$listHolder.html(list);
+        that.Loader.hide();
+        that.show();
+    }).fail(function (response) {
+        // Display error
+        that.Loader.hide();
+        console.error('Could not load leaderboard. ' + response.status + ' ' + response.statusText);
+    });
+
+};
+
+Leaderboard.prototype.show = function () {
+    this.$modal.fadeIn();
+};
+
+Leaderboard.prototype.hide = function () {
+    this.$modal.fadeOut();
+};
+var LeaderRegistrator = function(Alerter, Loader, API){
+    this.$holder = $('.register-leader');
+    this.$form = $('#leader-form');
+    this.$nameField = $('#leader_name');
+
+    this.Alerter = Alerter;
+    this.Loader = Loader;
+    this.API = API;
+
+};
+
+LeaderRegistrator.prototype.show = function () {
+    this.$holder.slideDown();
+};
+
+LeaderRegistrator.prototype.hide = function () {
+    this.$nameField.val('');
+    this.$holder.slideUp();
+};
+
+LeaderRegistrator.prototype.init = function () {
+
+    var that = this;
+
+    this.$form.on('submit', function (e) {
+        e.preventDefault();
+
+        that.showLoader('Saugomas jūsų rezultatas. Prašome palaukti.');
+
+        that.API.saveLeader({
+            'username': $('#leader_name').val(),
+            'score': goodAnswersCount,
+            'time': timeSpent
+        }).done(function (data) {
+
+            that.hide();
+            that.dissable();
+            that.Loader.hide();
+
+        }).fail(function (response) {
+            // Display error
+
+            that.Alerter.show('Jūsų rezultato išsaugoti nepavyko.');
+            that.Loader.hide();
+            console.error('Could not save leader to database. ' + response.status + ' ' + response.statusText);
+        });
+    });
+
+    this.show();
+};
+
+LeaderRegistrator.prototype.dissable = function () {
+    this.$form.unbind('submit');
+};
+var Loader = function () {
+    this.$modal = $('.loader');
+    this.$textHolder = $('.loader-text');
+};
+
+Loader.prototype.show = function (loadingText) {
+    this.$textHolder.text(loadingText);
+    this.$modal.fadeIn();
+};
+
+Loader.prototype.hide = function (){
+    this.$modal.fadeOut();
+};
+var QuitGame = function (quitCallback) {
+
+    this.$modal = $('.quit-modal');
+    this.$quitYes = $('.quit-yes');
+    this.$quitNo = $('.quit-no');
+    this.$backBtn = $('.back-arrow');
+
+    this.quitCallback = quitCallback;
+    this.isPlaying = false;
+
+    this.initClickEvents();
+
+};
+
+QuitGame.prototype.initClickEvents = function () {
+    var that = this;
+
+    this.$quitYes.on('click', function (e) {
+        e.preventDefault();
+        that.hide();
+        that.quitCallback(true);
+    });
+
+    this.$quitNo.on('click', function (e) {
+        e.preventDefault();
+        that.hide();
+        that.quitCallback(false);
+    });
+
+    this.$backBtn.on('click', function (e) {
+        e.preventDefault();
+
+        that.stop();
+    });
+};
+
+QuitGame.prototype.show = function () {
+    this.$modal.fadeIn();
+};
+
+QuitGame.prototype.hide = function () {
+    this.$modal.fadeOut();
+};
+
+QuitGame.prototype.stop = function () {
+    if (this.isPlaying) {
+        this.show();
+        return;
+    }
+    this.hide();
+    this.quitCallback(true);
+};
+
+QuitGame.prototype.showBackBtn = function () {
+    this.$backBtn.css('display', 'flex');
+};
+
+QuitGame.prototype.hideBackBtn = function () {
+    this.$backBtn.css('display', 'none');
+};
+
+
+
+var Screen = function (title, block) {
+
+    this.title = title;
+    this.$block = $(block);
+
+};
+
+Screen.prototype.show = function () {
+    this.$block.fadeIn();
+};
+
+Screen.prototype.hide = function () {
+    this.$block.hide();
+};
+
+Screen.prototype.getTitle = function(){
+    return this.title;
+};
+var FontResizer = function () {
+
+    this.$resizerBlock = $(".hidenResizer");
+    this.$mainWrapper = $('.main-wrapper');
+
+    this.initialSize = 32;
+    this.desiredheight = 120;
+};
+
+FontResizer.prototype.getSize = function (text) {
+    var size = this.initialSize;
+
+
+    this.$resizerBlock.html(text);
+    this.$resizerBlock.css("width", this.$mainWrapper.width() - 100);
+    this.$resizerBlock.css("font-size", size);
+
+    while(this.$resizerBlock.height() >= this.desiredheight) {
+        size = parseInt(this.$resizerBlock.css("font-size"), 10);
+        this.$resizerBlock.css("font-size", size - 1);
+    }
+
+    return size;
+};
+
+FontResizer.prototype.setFontSize = function ($block, text) {
+    var fontSize = this.getSize(text);
+    $block.css('font-size',fontSize);
+};
+var NumberText = function () {
+
+};
+NumberText.prototype.getText = function (number, oneText, fewText, tensText) {
+    if ((number > 1 && number < 10)
+        || (number > 20 && number % 10 !== 0 && number % 10 > 1)) {
+
+        return fewText;
+
+    } else if (number % 10 == 0 || number < 20 && number !== 1) {
+
+        return tensText;
+    }
+
+    return oneText;
+};
+var ScreenPicker = function (screens) {
+    this.screens = screens;
+};
+
+ScreenPicker.prototype.showScreen = function (title) {
+
+    $.each(this.screens, function (i, screen) {
+        if(screen.getTitle() == title){
+            screen.show();
+        }else{
+            screen.hide();
+        }
+    });
+
+};
+var Secret = function(rootFact, questions)
+{
+    this.rootFact = rootFact;
+    this.questions = questions;
+};
+
+Secret.prototype.getSecret = function()
+{
+    var stringIds = data.root.id + '';
+
+    for(var i = 0; i < data.questions.length; i++){
+        stringIds += data.questions[i].id;
+    }
+
+    return sha256(stringIds);
+};
 var API = function () {
     this.baseUrl = '';
 };
@@ -10485,6 +10853,14 @@ $(function() {
 var Game = function (gameContainer) {
     this.API = new API();
 
+
+    this.ScreenPicker = new ScreenPicker([
+        new Screen('intro','.screen--start'),
+        new Screen('game','.screen--game'),
+        new Screen('end','.screen--end')
+    ]);
+
+
     // Facts array
     this.facts = [];
     this.factsCount = 0;
@@ -10502,22 +10878,17 @@ var Game = function (gameContainer) {
     // Main container
     this.$gameContainer = $(gameContainer);
     this.$bottomWrapper = $('.bottom-wrapper');
-    this.$quitModal = $('.quit-modal');
+
     // Buttons
     this.$startBtn = $('.btn--start-game');
-    this.$backBtn = $('.back-arrow');
     this.$beforeBtn = $('.btn--before');
     this.$afterBtn = $('.btn--after');
-    this.$quitYes = $('.quit-yes');
-    this.$quitNo = $('.quit-no');
+
     this.$restartGame = $('.restart-game');
     this.$goToMain = $('.go-to-main');
     this.$closeDetailsWiev = $('.close-full-details');
 
     // Screens
-    this.$startScreen = $('.screen--start');
-    this.$gameScreen = $('.screen--game');
-    this.$endGameScreen = $('.screen--end');
     this.$fullDetailsScreen = $('.modal--full-details');
 
     // Full details
@@ -10525,8 +10896,7 @@ var Game = function (gameContainer) {
     this.$fullDetailsContent = $('.full-details-content');
 
     // Loading screen
-    this.$loader = $('.loader');
-    this.$loaderText = $('.loader-text');
+    this.Loader = new Loader();
 
     // Game objects
     this.$gameTimer = $('.timer-content');
@@ -10539,11 +10909,18 @@ var Game = function (gameContainer) {
     // End game objects
     this.$endGameTime = $('.time-holder');
     this.$endGameAnswers = $('.answers-holder');
-    this.$endGameResults = $('.results');
-    this.$leaderForm = $('#leader-form');
 
     this.Alerter = new Alert();
+    this.LeaderRegistrator = new LeaderRegistrator(this.Alerter, this.Loader, this.API);
+    this.Leaderboard = new Leaderboard(this.API, this.Loader);
+    this.resizer = new FontResizer();
+    this.NumberTitleGenerator = new NumberText();
+
+    this.GameQuiter = new QuitGame(this.quitToMainScreen);
+    this.gameResultsMaker = new GameResults();
+
     var that = this;
+
 
 
 
@@ -10555,11 +10932,7 @@ var Game = function (gameContainer) {
         that.initGame(1);
     });
 
-    this.$backBtn.on('click', function (e) {
-        e.preventDefault();
 
-        that.stopGame();
-    });
 
     this.$beforeBtn.on('click', function (e) {
         e.preventDefault();
@@ -10580,20 +10953,11 @@ var Game = function (gameContainer) {
         that.startGame();
     });
 
-    this.$quitYes.on('click', function (e) {
-        e.preventDefault();
-        that.quitToMainScreen(true);
-    });
 
-    this.$quitNo.on('click', function (e) {
-        e.preventDefault();
-        that.quitToMainScreen(false);
-    });
 
     this.$restartGame.on('click', function (e) {
         e.preventDefault();
-        that.$endGameResults.html('');
-        that.$endGameScreen.fadeOut(10);
+        that.gameResultsMaker.resetResults();
         that.initGame();
     });
 
@@ -10607,69 +10971,18 @@ var Game = function (gameContainer) {
         that.$fullDetailsScreen.fadeOut();
     });
 
-    $('.btn--show-leaderboard').on('click',function(e){
-        e.preventDefault();
-        that.showLoader('Gaunama informacija. Prašome palaukti.');
-        that.API.getLeaderboard().done(function (data) {
-            var list = $('<ul class="leaderboard"/>');
-            var li = $('<li class="header">' +
-                '<span class="leaderboard--place">Vieta</span>' +
-                '<span class="leaderboard--username">Vardas</span>' +
-                '<span class="leaderboard--score">Atsakyta klausimu</span>' +
-                '<span class="leaderboard--time">Sugaišo laiko</span>' +
-                '</li>');
-            list.append(li);
-            $.each(data.leaders,function(i,leader){
-                var li = $('<li>' +
-                    '<span class="leaderboard--place">'+(i+1)+'</span>' +
-                    '<span class="leaderboard--username">'+leader.username+'</span>' +
-                    '<span class="leaderboard--score">'+leader.score+'</span>' +
-                    '<span class="leaderboard--time">'+leader.time_spent+'</span>' +
-                    '</li>');
-                list.append(li);
-            });
 
-            $('.leaderboard-content').html(list);
-            that.hideLoader();
-            $('.modal--leaderboard').fadeIn();
-        }).fail(function (response) {
-            // Display error
-            that.hideLoader();
-            console.error('Could not load leaderboard. ' + response.status + ' ' + response.statusText);
-        });
-
-    });
-
-    $('.close-leaderboard').on('click',function(e){
-        e.preventDefault();
-        $('.modal--leaderboard').fadeOut();
-    });
 
 };
 
 Game.prototype.initGame = function (gameType) {
     var that = this;
     // Display loader
-    this.showLoader('Ruošiamas žaidimas. Prašome palaukti.');
+    this.Loader.show('Ruošiamas žaidimas. Prašome palaukti.');
 
     // Reset questions index
     this.qestionIndex = 0;
     this.facts = [];
-
-    // Load stubs data
-    /* var allStubs = new Stubs();
-     this.mainFact = allStubs.getMainFact();
-     this.facts = allStubs.getAllFacts();
-
-     that.factsCount = that.facts.length;
-     that.$gameMainFact.text(that.mainFact.name);
-     that.showNextQuestion();
-     that.$startScreen.fadeOut();
-     that.$gameScreen.fadeIn();
-     this.maxTime = 50;
-     that.initTimer();*/
-
-
     // Get game facts
 
     this.API.loadGameData(gameType).done(function (data) {
@@ -10682,22 +10995,23 @@ Game.prototype.initGame = function (gameType) {
         that.factsCount = that.facts.length;
 
         that.$gameMainFact.text(that.mainFact.name);
-        var fontSize = that.resizer(that.mainFact.name);
-        that.$gameMainFact.css('font-size',fontSize);
+
+        that.resizer.setFontSize(that.$gameMainFact, that.mainFact.name);
 
         that.maxTime = 590;
         that.isPlaying = true;
-        that.$startScreen.hide();
-        that.$gameScreen.fadeIn();
-        that.hideLoader();
+
+        that.Loader.hide();
         that.secondsToWait = 3;
         that.setBeforeGameCounter();
         that.showBeforeStartScreen();
-        that.showQuitButton();
+        that.GameQuiter.showBackBtn();
+
+        that.ScreenPicker.showScreen('game');
 
     }).fail(function (response) {
         // Display error
-        that.hideLoader();
+        that.Loader.hide();
         console.error('Could not load game data. ' + response.status + ' ' + response.statusText);
     });
 
@@ -10705,7 +11019,7 @@ Game.prototype.initGame = function (gameType) {
 
 
 Game.prototype.startGame = function () {
-    this.$leaderForm.unbind('submit');
+    this.LeaderRegistrator.dissable();
     this.showNextQuestion();
     this.initTimer();
     this.initKeyboardControls();
@@ -10726,21 +11040,9 @@ Game.prototype.setBeforeGameCounter = function () {
     }, 2000);
 };
 
-Game.prototype.stopGame = function () {
-    // Ask if user wants to stop the game if he is in the game
-    if (this.isPlaying) {
-        this.$quitModal.fadeIn();
-        return;
-    }
 
-
-    // Reset game and go to main screen
-
-    this.quitToMainScreen(true);
-};
 
 Game.prototype.quitToMainScreen = function (wantsToQuit) {
-    this.$quitModal.fadeOut();
     if (!wantsToQuit)
         return;
 
@@ -10790,15 +11092,6 @@ Game.prototype.checkTime = function () {
 
 };
 
-Game.prototype.showLoader = function (loader_text) {
-    this.$loaderText.text(loader_text);
-    this.$loader.fadeIn();
-};
-
-Game.prototype.hideLoader = function () {
-    this.$loader.fadeOut();
-};
-
 Game.prototype.showBeforeStartScreen = function () {
     this.$gameWaitScreen.fadeIn();
 };
@@ -10807,13 +11100,6 @@ Game.prototype.hideBeforeStartScreen = function () {
     this.$gameWaitScreen.fadeOut();
 };
 
-Game.prototype.showQuitButton = function () {
-    this.$backBtn.css('display', 'flex');
-};
-
-Game.prototype.hideQuitButton = function () {
-    this.$backBtn.css('display', 'none');
-};
 
 Game.prototype.showNextQuestion = function () {
     if (this.qestionIndex < this.factsCount) {
@@ -10821,8 +11107,8 @@ Game.prototype.showNextQuestion = function () {
         this.$gameSecondaryFact.text(this.facts[this.qestionIndex].name);
         this.$gameQuestionCount.text((this.qestionIndex + 1) + '/' + this.factsCount);
 
-        var fontSize = this.resizer(this.facts[this.qestionIndex].name);
-        this.$gameSecondaryFact.css('font-size',fontSize);
+        this.resizer.setFontSize(this.$gameSecondaryFact, this.facts[this.qestionIndex].name);
+
 
     } else {
         this.endGame();
@@ -10856,94 +11142,51 @@ Game.prototype.endGame = function () {
     // Get full details
     // Display results
 
-    this.showLoader('Skaičiuojami rezultatai. Prašome palaukti.');
+    this.Loader.show('Skaičiuojami rezultatai. Prašome palaukti.');
     this.removeKeyboardControls();
     this.isPlaying = false;
     var that = this;
     clearInterval(this.timer);
-    var goodAnswersCount = 0;
 
-
-    $.each(that.facts, function (i, fact) {
-        var $resultLine = $('<li class="results--item"></li>');
-        $resultLine.text(fact.name);
-        $resultLine.prepend('<span class="correct-icon" />');
-        $resultLine.prepend('<span class="wrong-icon" />');
-        if (fact.answer_was_right) {
-            goodAnswersCount++;
-        } else {
-            // Show that the answer was wrong
-            $resultLine.addClass('wrong');
-        }
-
-        if(fact.has_details == true) {
-            var $moreBtn = $('<a href="#" class="btn btn--more-details" data-fact_id="' + fact.id + '">Skaityti daugiau</a>');
-            $moreBtn.on('click', function (e) {
-                e.preventDefault();
-                that.showDetails($(this));
-            });
-            $resultLine.append($moreBtn);
-        }
-
-        that.$endGameResults.append($resultLine);
-    });
+    this.gameResultsMaker.generateResults(this.facts);
+    var goodAnswersCount = gameResultsMaker.getGoodAnswersCount();
 
     var timeSpent = this.maxTime - this.timeLeft;
 
     this.API.isLeaderBetter(goodAnswersCount, timeSpent).done(function (data) {
-        that.hideLoader();
+        that.Loader.hide();
 
         if (data.is_better == true){
-            that.$leaderForm.on('submit', function (e) {
-                e.preventDefault();
 
-                that.showLoader('Saugomas jūsų rezultatas. Prašome palaukti.');
-                that.API.saveLeader({
-                    'username': $('#leader_name').val(),
-                    'score': goodAnswersCount,
-                    'time': timeSpent
-                }).done(function (data) {
-                    $('.register-leader').slideUp();
-                    $('#leader_name').val('');
-                    that.$leaderForm.unbind('submit');
-                    that.hideLoader();
-                }).fail(function (response) {
-                    // Display error
+            that.LeaderRegistrator.init();
 
-                    that.Alerter.show('Jūsų rezultato išsaugoti nepavyko.');
-                    that.hideLoader();
-                    console.error('Could not save leader to database. ' + response.status + ' ' + response.statusText);
-                });
-            });
-            $('.register-leader').slideDown();
         }
     }).fail(function (response) {
         // Display error
-        that.hideLoader();
+        that.Loader.hide();
         console.error('Could not get better leaders count. ' + response.status + ' ' + response.statusText);
     });
 
 
-    var sec = this.getNumberTitle(timeSpent, 'sekundę', 'sekundes', 'sekundžių');
-    var answers = this.getNumberTitle(goodAnswersCount, 'klausimą', 'klausimus', 'klausimų');
+    var sec = this.NumberTitleGenerator.getText(timeSpent, 'sekundę', 'sekundes', 'sekundžių');
+    var answers = this.NumberTitleGenerator.getText(goodAnswersCount, 'klausimą', 'klausimus', 'klausimų');
 
 
     this.$endGameTime.text(timeSpent + ' ' + sec);
     this.$endGameAnswers.text(goodAnswersCount + ' ' + answers);
 
-    this.$gameScreen.fadeOut(10);
-    this.$endGameScreen.fadeIn();
+    this.ScreenPicker.showScreen('end');
 };
 
 Game.prototype.showDetails = function ($button) {
     var that = this;
     var factId = $button.data('fact_id');
-    this.showLoader('gauname fakto informaciją');
+    this.Loader.show('gauname fakto informaciją');
     this.API.loadFactsDetailsDataById(factId).done(function (data) {
         that.$fullDetailsTitle.text(data.title);
         that.$fullDetailsContent.html(data.content);
         that.$fullDetailsScreen.fadeIn();
-        that.hideLoader();
+        that.Loader.hide();
     }).fail(function (response) {
         console.error('Could not load full details data. ' + response.status + ' ' + response.statusText);
     });
@@ -10957,43 +11200,14 @@ Game.prototype.resetGame = function () {
 
     this.isPlaying = false;
     this.facts = [];
-    this.$endGameResults.html('');
-    this.$endGameScreen.fadeOut(10);
-    this.$gameScreen.fadeOut(10);
-    this.$startScreen.fadeIn();
-    this.hideQuitButton();
+    this.gameResultsMaker.resetResults();
+
+    this.GameQuiter.hideBackBtn();
+
+    this.ScreenPicker.showScreen('intro');
 };
 
-Game.prototype.getNumberTitle = function (number, oneText, fewText, tensText) {
-    if ((number > 1 && number < 10)
-        || (number > 20 && number % 10 !== 0 && number % 10 > 1)) {
 
-        return fewText;
-
-    } else if (number % 10 == 0 || number < 20 && number !== 1) {
-
-        return tensText;
-    }
-
-    return oneText;
-}
-
-Game.prototype.resizer = function(text){
-    var size = 32;
-    var desired_height = 120;
-    var resizerBlock = $(".hidenResizer");
-
-    resizerBlock.html(text);
-    resizerBlock.css("width", $('.main-wrapper').width() - 100);
-    resizerBlock.css("font-size", size);
-
-    while(resizerBlock.height() >= desired_height) {
-        size = parseInt(resizerBlock.css("font-size"), 10);
-        resizerBlock.css("font-size", size - 1);
-    }
-
-    return size;
-};
 var Stubs = function()
 {
     this.mainFact = {
@@ -11027,38 +11241,6 @@ Stubs.prototype.getMainFact = function()
 Stubs.prototype.getAllFacts = function()
 {
     return this.allFacts;
-};
-
-var Alert = function()
-{
-    this.$modal = $('.modal-alert');
-    this.$textHolder = $('.modal-alert--message');
-    this.$closeButton = $('.alert-ok');
-    this.timer;
-    this.timeToShow = 10; // In seconds
-
-    var that = this;
-
-    this.$closeButton.on('click',function(e){
-        e.preventDefault();
-        that.hide();
-    });
-};
-
-Alert.prototype.hide = function ()
-{
-    clearTimeout(this.timer);
-    this.$modal.fadeOut();
-};
-
-Alert.prototype.show = function(alertText)
-{
-    var that = this;
-    this.$textHolder.text(alertText);
-    this.$modal.fadeIn();
-    this.timer = setTimeout(function(){
-        that.hide();
-    }, this.timeToShow * 1000);
 };
 
 //# sourceMappingURL=maps/app.js.map
