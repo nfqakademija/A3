@@ -120,24 +120,24 @@ class FactsFetcher
         );
 
 //        $response_questions[] = $this->formatFacts($q_array_before, true);
-  //      $response_questions[] = $this->formatFacts($q_array_after, false);
+        //      $response_questions[] = $this->formatFacts($q_array_after, false);
 
-     /*
-        foreach ($q_array_before as $before_fact) {
-            $response_question = $this->factsResponse($before_fact);
-            $response_question ["is_before"] = true;
-            $response_questions[] = $response_question;
+        /*
+           foreach ($q_array_before as $before_fact) {
+               $response_question = $this->factsResponse($before_fact);
+               $response_question ["is_before"] = true;
+               $response_questions[] = $response_question;
 
-        }
+           }
 
-        foreach ($q_array_after as $after_fact) {
+           foreach ($q_array_after as $after_fact) {
 
-            $response_question = $this->factsResponse($after_fact);
-            $response_question ["is_before"] = false;
-            $response_questions[] = $response_question;
-        }
+               $response_question = $this->factsResponse($after_fact);
+               $response_question ["is_before"] = false;
+               $response_questions[] = $response_question;
+           }
 
-*/
+   */
         shuffle($response_questions);
 
 
@@ -156,15 +156,34 @@ class FactsFetcher
         }
         return $response_questions;
     }
+
     private function factsResponse(Fact $fact)
     {
         $response = array(
             "id" => $fact->getId(),
             "name" => $fact->getName(),
-            "has_details" => (bool)$fact->getDescription(),
+            "date" => $this->formatDate($fact),
+
         );
 
         return $response;
+    }
+
+
+    private function formatDate($fact)
+    {
+        $date = $fact->getYear();
+        $month = $fact->getMonth();
+        $day = $fact->getDay();
+
+        if ($month == null) {
+            $date = $date . " m.";
+        } elseif ($day == null) {
+            $date = $date . " m. " . $month . " mėn. ";
+        } else {
+            $date = $date . " m. " . $month . " mėn. " . $day . " d.";
+        }
+        return $date;
     }
 
 }
