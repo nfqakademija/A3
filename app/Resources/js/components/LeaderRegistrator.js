@@ -34,6 +34,13 @@ LeaderRegistrator.prototype.init = function (gameId, mainFact, questions) {
             questions
         ).done(function (data) {
 
+            if(data.status !== 'success'){
+                that.Alerter.show('Jūsų rezultato išsaugoti nepavyko.');
+                that.Loader.hide();
+                return;
+            }
+
+
             that.hide();
             that.dissable();
             that.Loader.hide();
