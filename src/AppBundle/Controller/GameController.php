@@ -44,6 +44,10 @@ class GameController extends Controller
      */
     public function finishGameAction(Request $request)
     {
+
+        if (!$request->isXmlHttpRequest() || !$request->isMethod('GET'))
+            throw new BadRequestHttpException('This is not an AJAX request!');
+
         $gameId = $request->query->getInt('id');
         $gameSecret = $request->query->get('secret');
         $timeUsed = $request->query->getInt('time_used');
@@ -111,6 +115,10 @@ class GameController extends Controller
      */
     public function saveGameAction(Request $request)
     {
+
+        if (!$request->isXmlHttpRequest() || !$request->isMethod('POST'))
+            throw new BadRequestHttpException('This is not an AJAX request!');
+
         $gameId = $request->request->getInt('id');
         $gameSecret = $request->request->get('secret');
         $username = $request->request->get('username');
