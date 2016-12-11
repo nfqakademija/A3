@@ -22,15 +22,6 @@ html {
   background: lighten($dark_blue,10%);
 }
 
-.noselect, * {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Chrome/Safari/Opera */
-  -khtml-user-select: none; /* Konqueror */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-                                  not supported by any browser */
-}
 
 body {
   background: url(../img/main-bg.jpg) center center no-repeat;
@@ -143,6 +134,7 @@ body {
   left: 0;
   background: rgba(darken($dark_blue, 40%), 0.95);
   display: none;
+  z-index: 9999999;
 }
 
 .loader-elem {

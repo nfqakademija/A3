@@ -24,7 +24,7 @@
     font-weight: 200;
   }
 
-  .bottom-wrapper__content{
+  .bottom-wrapper__content {
     margin-top: 10px;
     align-self: flex-start;
   }
@@ -35,6 +35,10 @@
   padding: 6px;
   vertical-align: middle;
   color: $lime;
+
+  display: flex;
+  flex-flow: row;
+
   .wrong-icon {
     display: none;
   }
@@ -56,6 +60,45 @@
   }
 }
 
+
+
+.titleDate-holder {
+  display: flex;
+  flex-flow: row;
+  flex: 1 1 auto;
+
+}
+
+.titleDate-title {
+  flex: 1 1 auto;
+}
+
+.titleDate-date {
+  flex: 1 1 160px;
+  float: right;
+  text-align: right;
+  left: 10px;
+
+}
+
+.main-item {
+  padding: 20px;
+  font-weight: bold;
+  background: $green;
+  color: $dark_blue;
+
+  .titleDate-title {
+    padding-left: 30px;
+  }
+
+  .titleDate-date {
+    flex: 1 1 200px;
+    float: right;
+    text-align: right;
+    left: 10px;
+  }
+}
+
 .btn--more-details {
   float: right;
   font-size: 12px;
@@ -73,7 +116,7 @@
 }
 
 .correct-icon {
-  &:before{
+  &:before {
     display: block;
     content: '\2714';
   }
@@ -81,7 +124,7 @@
 }
 
 .wrong-icon {
-  &:before{
+  &:before {
     display: block;
     content: '\2718';
   }
@@ -115,7 +158,7 @@
 .register-leader {
   border-radius: 10px;
   padding: 20px;
-  border:solid 1px darken($light_gray,10%);
+  border: solid 1px darken($light_gray, 10%);
   margin: 20px auto;
   display: none;
   max-width: 400px;
@@ -125,7 +168,7 @@
     width: 100%;
     padding: 10px;
   }
-  small{
+  small {
     display: block;
   }
 }
@@ -136,4 +179,16 @@
   width: 100%;
   padding: 10px;
   display: inline-block;
+}
+
+.game-score-text{
+  margin-top: 15px;
+  font-size: 18px;
+}
+
+.end-game-score{
+  margin-bottom: 30px;
+  font-size: 32px;
+  color: $lime;
+  font-weight: bold;
 }

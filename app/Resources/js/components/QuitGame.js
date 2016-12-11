@@ -1,11 +1,11 @@
-var QuitGame = function (quitCallback) {
+var QuitGame = function (that) {
 
     this.$modal = $('.quit-modal');
     this.$quitYes = $('.quit-yes');
     this.$quitNo = $('.quit-no');
     this.$backBtn = $('.back-arrow');
 
-    this.quitCallback = quitCallback;
+    this.that = that;
     this.isPlaying = false;
 
     this.initClickEvents();
@@ -18,13 +18,13 @@ QuitGame.prototype.initClickEvents = function () {
     this.$quitYes.on('click', function (e) {
         e.preventDefault();
         that.hide();
-        that.quitCallback(true);
+        that.that.quitToMainScreen(true);
     });
 
     this.$quitNo.on('click', function (e) {
         e.preventDefault();
         that.hide();
-        that.quitCallback(false);
+        that.that.quitToMainScreen(false);
     });
 
     this.$backBtn.on('click', function (e) {
@@ -43,12 +43,12 @@ QuitGame.prototype.hide = function () {
 };
 
 QuitGame.prototype.stop = function () {
-    if (this.isPlaying) {
+    if (this.that.isPlaying) {
         this.show();
         return;
     }
     this.hide();
-    this.quitCallback(true);
+    this.that.quitToMainScreen(true);
 };
 
 QuitGame.prototype.showBackBtn = function () {

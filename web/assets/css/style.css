@@ -22,20 +22,6 @@ html {
 ::-webkit-scrollbar-thumb {
   background: #577793; }
 
-.noselect, * {
-  -webkit-touch-callout: none;
-  /* iOS Safari */
-  -webkit-user-select: none;
-  /* Chrome/Safari/Opera */
-  /* Konqueror */
-  -moz-user-select: none;
-  /* Firefox */
-  -ms-user-select: none;
-  /* Internet Explorer/Edge */
-  user-select: none;
-  /* Non-prefixed version, currently
-                                  not supported by any browser */ }
-
 body {
   background: url(../img/main-bg.jpg) center center no-repeat;
   background-size: cover;
@@ -128,7 +114,8 @@ body {
   bottom: 0;
   left: 0;
   background: rgba(0, 0, 0, 0.95);
-  display: none; }
+  display: none;
+  z-index: 9999999; }
 
 .loader-elem {
   position: absolute;
@@ -613,7 +600,11 @@ header {
   text-align: left;
   padding: 6px;
   vertical-align: middle;
-  color: #00B259; }
+  color: #00B259;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-flow: row;
+  flex-flow: row; }
   .results--item .wrong-icon {
     display: none; }
   .results--item.wrong {
@@ -626,6 +617,39 @@ header {
     display: block;
     content: '';
     clear: both; }
+
+.titleDate-holder {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-flow: row;
+  flex-flow: row;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto; }
+
+.titleDate-title {
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto; }
+
+.titleDate-date {
+  -ms-flex: 1 1 160px;
+  flex: 1 1 160px;
+  float: right;
+  text-align: right;
+  left: 10px; }
+
+.main-item {
+  padding: 20px;
+  font-weight: bold;
+  background: #01AF98;
+  color: #445D73; }
+  .main-item .titleDate-title {
+    padding-left: 30px; }
+  .main-item .titleDate-date {
+    -ms-flex: 1 1 200px;
+    flex: 1 1 200px;
+    float: right;
+    text-align: right;
+    left: 10px; }
 
 .btn--more-details {
   float: right;
@@ -688,5 +712,15 @@ header {
   width: 100%;
   padding: 10px;
   display: inline-block; }
+
+.game-score-text {
+  margin-top: 15px;
+  font-size: 18px; }
+
+.end-game-score {
+  margin-bottom: 30px;
+  font-size: 32px;
+  color: #00B259;
+  font-weight: bold; }
 
 /*# sourceMappingURL=maps/style.css.map */

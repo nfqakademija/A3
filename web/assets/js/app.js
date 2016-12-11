@@ -10479,19 +10479,34 @@ Alert.prototype.show = function(alertText)
         that.hide();
     }, this.timeToShow * 1000);
 };
-var GameResults = function (facts) {
+var GameResults = function () {
 
     this.goodAnswersCount = 0;
     this.$endGameResults = $('.results');
+
 };
 
-GameResults.prototype.generateResults = function (facts) {
+GameResults.prototype.generateResults = function (facts, mainFact) {
     var that = this;
+
+    var $mainFactLine = $('<li class="results--item main-item"></li>');
+    var $mainTitleDateHolder = $('<div class="titleDate-holder" ></div>');
+    $mainTitleDateHolder.append('<span class="titleDate-title">'+mainFact.name+'</span>');
+    $mainTitleDateHolder.append('<span class="titleDate-date">'+mainFact.date+'</span>');
+    $mainFactLine.append($mainTitleDateHolder);
+    that.$endGameResults.append($mainFactLine);
+
     $.each(facts, function (i, fact) {
         var $resultLine = $('<li class="results--item"></li>');
-        $resultLine.text(fact.name);
+
+        var $titleDateHolder = $('<div class="titleDate-holder" ></div>');
+        $titleDateHolder.append('<span class="titleDate-title">'+fact.name+'</span>');
+        $titleDateHolder.append('<span class="titleDate-date">'+fact.date+'</span>');
+
+        $resultLine.append($titleDateHolder);
         $resultLine.prepend('<span class="correct-icon" />');
         $resultLine.prepend('<span class="wrong-icon" />');
+
         if (fact.answer_was_right) {
             that.goodAnswersCount++;
         } else {
@@ -10499,6 +10514,8 @@ GameResults.prototype.generateResults = function (facts) {
             $resultLine.addClass('wrong');
         }
 
+
+        /*
         if(fact.has_details == true) {
             var $moreBtn = $('<a href="#" class="btn btn--more-details" data-fact_id="' + fact.id + '">Skaityti daugiau</a>');
             $moreBtn.on('click', function (e) {
@@ -10506,7 +10523,7 @@ GameResults.prototype.generateResults = function (facts) {
                 that.showDetails($(this));
             });
             $resultLine.append($moreBtn);
-        }
+        }*/
 
         that.$endGameResults.append($resultLine);
     });
@@ -10665,14 +10682,14 @@ Loader.prototype.show = function (loadingText) {
 Loader.prototype.hide = function (){
     this.$modal.fadeOut();
 };
-var QuitGame = function (quitCallback) {
+var QuitGame = function (that) {
 
     this.$modal = $('.quit-modal');
     this.$quitYes = $('.quit-yes');
     this.$quitNo = $('.quit-no');
     this.$backBtn = $('.back-arrow');
 
-    this.quitCallback = quitCallback;
+    this.that = that;
     this.isPlaying = false;
 
     this.initClickEvents();
@@ -10685,13 +10702,13 @@ QuitGame.prototype.initClickEvents = function () {
     this.$quitYes.on('click', function (e) {
         e.preventDefault();
         that.hide();
-        that.quitCallback(true);
+        that.that.quitToMainScreen(true);
     });
 
     this.$quitNo.on('click', function (e) {
         e.preventDefault();
         that.hide();
-        that.quitCallback(false);
+        that.that.quitToMainScreen(false);
     });
 
     this.$backBtn.on('click', function (e) {
@@ -10710,12 +10727,12 @@ QuitGame.prototype.hide = function () {
 };
 
 QuitGame.prototype.stop = function () {
-    if (this.isPlaying) {
+    if (this.that.isPlaying) {
         this.show();
         return;
     }
     this.hide();
-    this.quitCallback(true);
+    this.that.quitToMainScreen(true);
 };
 
 QuitGame.prototype.showBackBtn = function () {
@@ -10883,6 +10900,7 @@ $(function() {
 var Game = function (gameContainer) {
     this.API = new API();
 
+    var that = this;
 
     this.ScreenPicker = new ScreenPicker([
         new Screen('intro', '.screen--start'),
@@ -10947,10 +10965,10 @@ var Game = function (gameContainer) {
     this.resizer = new FontResizer();
     this.NumberTitleGenerator = new NumberText();
 
-    this.GameQuiter = new QuitGame(this.quitToMainScreen);
+    this.GameQuiter = new QuitGame(that);
     this.gameResultsMaker = new GameResults();
 
-    var that = this;
+
 
 
     // Init click events
@@ -11006,6 +11024,8 @@ Game.prototype.initGame = function (gameType) {
     // Display loader
     this.Loader.show('Ruošiamas žaidimas. Prašome palaukti.');
 
+    clearInterval(this.timer);
+
     // Reset questions index
     this.qestionIndex = 0;
     this.facts = [];
@@ -11047,6 +11067,7 @@ Game.prototype.initGame = function (gameType) {
 
 
 Game.prototype.startGame = function () {
+
     this.LeaderRegistrator.dissable();
     this.showNextQuestion();
     this.initTimer();
@@ -11096,6 +11117,7 @@ Game.prototype.removeKeyboardControls = function () {
 };
 
 Game.prototype.initTimer = function () {
+    clearInterval(this.timer);
     var that = this;
     this.timeLeft = this.maxTime;
     this.$gameTimer.text(this.timeLeft + ' s');
@@ -11106,8 +11128,10 @@ Game.prototype.initTimer = function () {
 
 Game.prototype.checkTime = function () {
     this.timeLeft--;
+
     if (this.timeLeft <= 0) {
         this.endGame();
+        return;
     }
 
     this.$gameTimer.text(this.timeLeft + ' s');
@@ -11135,9 +11159,8 @@ Game.prototype.showNextQuestion = function () {
         this.$gameQuestionCount.text((this.qestionIndex + 1) + '/' + this.factsCount);
 
         this.resizer.setFontSize(this.$gameSecondaryFact, this.facts[this.qestionIndex].name);
-
-
     } else {
+
         this.endGame();
     }
 };
@@ -11169,42 +11192,49 @@ Game.prototype.endGame = function () {
     // Get full details
     // Display results
 
+
+
+    clearInterval(this.timer);
+    //this.timer = null;
+
     this.Loader.show('Skaičiuojami rezultatai. Prašome palaukti.');
     this.removeKeyboardControls();
     this.isPlaying = false;
     var that = this;
-    clearInterval(this.timer);
 
-    this.gameResultsMaker.generateResults(this.facts);
+    this.gameResultsMaker.generateResults(this.facts, this.mainFact);
     var goodAnswersCount = this.gameResultsMaker.getGoodAnswersCount();
 
     var timeSpent = this.maxTime - this.timeLeft;
 
-    this.API.finishGame(that.gameId, goodAnswersCount, timeSpent, that.facts, that.mainFact).done(function (data) {
-        that.Loader.hide();
 
-        console.log(data);
+    this.API.finishGame(that.gameId, goodAnswersCount, timeSpent, that.facts, that.mainFact).done(function (data) {
+
+
+        var $endGameScore = $('.end-game-score');
+        var scoreText = that.NumberTitleGenerator.getText(data.score, 'tašką', 'taškus', 'taškų');
+        $endGameScore.text(data.score + ' ' + scoreText);
 
         if (data.can_register === true) {
 
             that.LeaderRegistrator.init(that.gameId, that.mainFact, that.facts);
 
         }
+
+        var sec = that.NumberTitleGenerator.getText(timeSpent, 'sekundę', 'sekundes', 'sekundžių');
+        var answers = that.NumberTitleGenerator.getText(goodAnswersCount, 'klausimą', 'klausimus', 'klausimų');
+
+        that.$endGameTime.text(timeSpent + ' ' + sec);
+        that.$endGameAnswers.text(goodAnswersCount + ' ' + answers);
+
+        that.Loader.hide();
+        that.ScreenPicker.showScreen('end');
+
     }).fail(function (response) {
         // Display error
         that.Loader.hide();
         console.error('Could not get better leaders count. ' + response.status + ' ' + response.statusText);
     });
-
-
-    var sec = this.NumberTitleGenerator.getText(timeSpent, 'sekundę', 'sekundes', 'sekundžių');
-    var answers = this.NumberTitleGenerator.getText(goodAnswersCount, 'klausimą', 'klausimus', 'klausimų');
-
-
-    this.$endGameTime.text(timeSpent + ' ' + sec);
-    this.$endGameAnswers.text(goodAnswersCount + ' ' + answers);
-
-    this.ScreenPicker.showScreen('end');
 };
 
 Game.prototype.showDetails = function ($button) {
@@ -11223,9 +11253,14 @@ Game.prototype.showDetails = function ($button) {
 
 Game.prototype.resetGame = function () {
     // Reset game and get back to main screen
+
+    //console.log(this.timer);
+    clearInterval(this.timer);
+    //this.timer = null;
+
     var that = this;
 
-    clearInterval(that.timer);
+
 
     this.isPlaying = false;
     this.facts = [];
