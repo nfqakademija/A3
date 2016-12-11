@@ -12,10 +12,34 @@ API.prototype.loadFactsDetailsDataById = function (factId) {
     return $.get('');
 };
 
-API.prototype.saveLeader = function (leader) {
-    var url = this.baseUrl + 'leaderboard/save';
-    return $.post(url, leader);
+API.prototype.saveGame = function (username, gameId, rootFact, questions) {
+
+    var secretMaker = new Secret(rootFact, questions);
+
+    var gameDetails = {};
+    gameDetails.id = gameId;
+    gameDetails.username = username;
+    gameDetails.secret = secretMaker.getSecret();
+
+    var url = this.baseUrl + 'game/save';
+    return $.post(url, gameDetails);
 };
+
+API.prototype.finishGame = function (gameId, questionsAnswered, timeUsed, questions, rootFact) {
+
+    var secretMaker = new Secret(rootFact, questions);
+
+    var gameDetails = {};
+    gameDetails.id = gameId;
+    gameDetails.questions_answered = questionsAnswered;
+    gameDetails.time_used = timeUsed;
+    gameDetails.secret = secretMaker.getSecret();
+
+    var url = this.baseUrl + 'game/finish';
+
+    return $.get(url, gameDetails);
+};
+
 
 API.prototype.isLeaderBetter = function (score, time) {
     var url = this.baseUrl + 'leaderboard/isbetter/' + score + '/' + time;

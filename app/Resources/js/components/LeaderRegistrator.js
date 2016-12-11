@@ -18,20 +18,21 @@ LeaderRegistrator.prototype.hide = function () {
     this.$holder.slideUp();
 };
 
-LeaderRegistrator.prototype.init = function () {
+LeaderRegistrator.prototype.init = function (gameId, mainFact, questions) {
 
     var that = this;
 
     this.$form.on('submit', function (e) {
         e.preventDefault();
 
-        that.showLoader('Saugomas jūsų rezultatas. Prašome palaukti.');
+        that.Loader.show('Saugomas jūsų rezultatas. Prašome palaukti.');
 
-        that.API.saveLeader({
-            'username': $('#leader_name').val(),
-            'score': goodAnswersCount,
-            'time': timeSpent
-        }).done(function (data) {
+        that.API.saveGame(
+            $('#leader_name').val(),
+            gameId,
+            mainFact,
+            questions
+        ).done(function (data) {
 
             that.hide();
             that.dissable();
@@ -50,5 +51,5 @@ LeaderRegistrator.prototype.init = function () {
 };
 
 LeaderRegistrator.prototype.dissable = function () {
-    that.$leaderForm.unbind('submit');
+    this.$form.unbind('submit');
 };
