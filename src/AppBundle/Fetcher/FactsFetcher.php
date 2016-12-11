@@ -12,10 +12,8 @@ class FactsFetcher
     private $beginPercentage;
     private $endPercentage;
 
-
     public function __construct($numberOfQuestions, $time, $beginPercentage, $endPercentage)
     {
-
         $this->numberOfQuestions = $numberOfQuestions;
         $this->time = $time;
         $this->beginPercentage = $beginPercentage;
@@ -24,14 +22,11 @@ class FactsFetcher
 
     public function fetchFacts($facts)
     {
-
         $this->facts = $facts;
-
         $count = count($this->facts);  //counts facts
         $root_from = intval($count / 100 * $this->beginPercentage);  //disables first 10% for root
         $root_to = intval($count / 100 * $this->endPercentage);   //disables last 10% for root
         $root = mt_rand($root_from, $root_to);  // gets root element
-
 
         $q_count_half = $this->numberOfQuestions / 2;
 
@@ -49,23 +44,14 @@ class FactsFetcher
             } else {
                 $q_before = intval($q_count_half) + 1;
                 $q_after = intval($q_count_half);
-
             }
         }
-
 
         $q_before_diff = $root - $q_before;
         if ($q_before_diff < 0) {
             $q_after = $q_after - ($q_before_diff);
             $q_before = $q_before + ($q_before_diff);
-
         }
-
-        //elseif ($q_before_diff == 0){
-        //  $q_after +=1;
-        //$q_before -=1;
-
-        //}
 
         $q_after_diff = $count - $root - $q_after - 1;
         if ($q_after_diff == 0) {
@@ -74,72 +60,35 @@ class FactsFetcher
         } elseif ($q_after_diff < 0) {
             $q_before = $q_before - ($q_after_diff);
             $q_after = $q_after + ($q_after_diff);
-
-
         }
 
-
-        //get questions array
-
-
-        $q_array = array();
 
         $q_array_before = array();
 
         $output = array_slice($this->facts, 0, $root);
 
         for ($i = 0; $i < $q_before; $i++) {
-
             shuffle($output);
             $t = array_pop($output);
             $q_array_before[] = $t;
-
-
         }
-
 
         $q_array_after = array();
         $output = array_slice($this->facts, $root + 1);
 
         for ($i = 0; $i < $q_after; $i++) {
-
             shuffle($output);
-
-
             $q_array_after[] = array_pop($output);
-
         }
 
-
         $response_root = $this->factsResponse($this->facts[$root]);
-        $response_questions = array();
 
         $response_questions = array_merge(
             $this->formatFacts($q_array_before, true),
             $this->formatFacts($q_array_after, false)
         );
 
-//        $response_questions[] = $this->formatFacts($q_array_before, true);
-        //      $response_questions[] = $this->formatFacts($q_array_after, false);
-
-        /*
-           foreach ($q_array_before as $before_fact) {
-               $response_question = $this->factsResponse($before_fact);
-               $response_question ["is_before"] = true;
-               $response_questions[] = $response_question;
-
-           }
-
-           foreach ($q_array_after as $after_fact) {
-
-               $response_question = $this->factsResponse($after_fact);
-               $response_question ["is_before"] = false;
-               $response_questions[] = $response_question;
-           }
-
-   */
         shuffle($response_questions);
-
 
         return ['response_question' => $response_questions, 'response_root' => $response_root,
             'response_time' => $this->time];
@@ -163,12 +112,10 @@ class FactsFetcher
             "id" => $fact->getId(),
             "name" => $fact->getName(),
             "date" => $this->formatDate($fact),
-
         );
 
         return $response;
     }
-
 
     private function formatDate($fact)
     {
