@@ -1,5 +1,5 @@
 <?php
-namespace AppBundle\Fetcher;
+namespace AppBundle\Game;
 
 use AppBundle\Entity\Fact;
 

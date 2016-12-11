@@ -5,12 +5,18 @@ parameters:
   time: 30
   beginpercentage: 20
   endpercentage: 80
+  timecoficient: 0.1
+
 #    parameter_name: value
 
 services:
   facts_fetcher:
-    class: AppBundle\Fetcher\FactsFetcher
+    class: AppBundle\Game\FactsFetcher
     arguments: ["%numberofquestions%", "%time%", "%beginpercentage%", "%endpercentage%"]
+
+  gameregister:
+      class: AppBundle\Game\Register
+      arguments: ["@doctrine.orm.entity_manager"]
 
 #    service_name:
 #        class: AppBundle\Directory\ClassName

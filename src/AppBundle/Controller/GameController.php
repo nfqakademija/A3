@@ -2,13 +2,10 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\AppBundle;
 use AppBundle\Entity\Game;
-use AppBundle\Repository\FactRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Fact;
 use \DateTime;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -20,8 +17,6 @@ class GameController extends Controller
      */
     public function initGameAction()
     {
-
-
         $facts = $this->getDoctrine()
             ->getRepository('AppBundle:Fact')->findFactsForGame();
 
@@ -33,8 +28,8 @@ class GameController extends Controller
         $response["questions"] = $responseall['response_question'];
         $response["time"] = $responseall['response_time'];
 
-        $game = $this->registerGame($response);
-
+        $gameRegister = $this->container->get('gameregister');
+        $game = $gameRegister->registerGame($response);
         $response["game_id"] = $game->getId();
 
         return $this->json($response);
@@ -170,46 +165,6 @@ class GameController extends Controller
         return $this->json($response);
     }
 
-
-
-
-    /**
-     * @param array $response
-     * @return Game
-     */
-    private function registerGame(array $response): Game
-    {
-        $game = new Game();
-        $game->setCreatedOn(new DateTime());
-        $game->setTimeGiven($response['time']);
-        $game->setQuestionsGiven(count($response['questions']));
-        $game->setSecret(
-             $this->getSecret($response)
-        );
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($game);
-        $em->flush();
-
-        if ($game->getId() == null)
-            throw $this->createNotFoundException('Could not register a game.');
-
-        return $game;
-    }
-
-    /**
-     * @param array $response
-     * @return string
-     */
-    private function getSecret(array $response): string
-    {
-        $stringOfIds = (string)$response['root']['id'];
-        foreach ($response["questions"] as $question)
-            $stringOfIds .= (string)$question['id'];
-
-        return  hash('sha256', $stringOfIds);
-    }
-
     /**
      * @param Game $game
      * @return int
@@ -217,7 +172,7 @@ class GameController extends Controller
     private function getGameScore(Game $game):int
     {
         $questionsPart = $game->getQuestionsAnswered() / $game->getQuestionsGiven();
-        $timePart = (1 - ($game->getTimeUsed() / $game->getTimeGiven())) * 0.1;
+        $timePart = (1 - ($game->getTimeUsed() / $game->getTimeGiven())) * $this->container->getParameter('timecoficient');
 
         return ($questionsPart + $timePart ) * 10000;
     }
