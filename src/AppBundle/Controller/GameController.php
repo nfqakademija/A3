@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\AppBundle;
 use AppBundle\Entity\Game;
 use AppBundle\Repository\FactRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -48,31 +49,55 @@ class GameController extends Controller
         $timeUsed = $request->query->getInt('time_used');
         $questionsAnswered = $request->query->getInt('questions_answered');
 
-        $game = $this->getDoctrine()
-            ->getRepository('AppBundle:Game')->getGameByIdAndSecret($gameId, $gameSecret);
+        $doctrine = $this->getDoctrine();
+        $em = $doctrine->getManager();
 
-        if ($game->getSecret() !== $gameSecret)
-            return $this->json(['error' => 'Secret does not match']);
-
-        $now = new DateTime();
-
-        /*if ($now->getTimestamp() - $game->getCreatedOn()->getTimestamp() > ($game->getTimeGiven() + 60))
-            return $this->json(['error' => 'The game in database is to old.']);*/
-
-
+        $game = $em->find('AppBundle:Game', $gameId);
         $game->setTimeUsed($timeUsed);
         $game->setQuestionsAnswered($questionsAnswered);
         $game->setScore($this->getGameScore($game));
 
-        $betterCount = $this->getDoctrine()
+        $betterCount = $doctrine
             ->getRepository('AppBundle:Game')->getBetterCount($game);
 
         $game->setCanRegister($betterCount<10);
+
+        if ($game->getSecret() !== $gameSecret){
+            return $this->json([
+                'status' => 'fail',
+                'error' => 'Secret does not match'
+            ]);
+        }
+
+        $now = new DateTime();
+
+        if ($now->getTimestamp() - $game->getCreatedOn()->getTimestamp() > ($game->getTimeGiven() + 60)){
+            return $this->json([
+                'status' => 'fail',
+                'error' => 'The game in database is to old.'
+            ]);
+        }
+
+        if ($game->getQuestionsGiven() < $game->getQuestionsAnswered()){
+            return $this->json([
+                'status' => 'fail',
+                'error' => 'User can\'t answer more questions than there is given to him.'
+            ]);
+        }
+
+        if ($game->getQuestionsGiven() < $game->getQuestionsAnswered()){
+            return $this->json([
+                'status' => 'fail',
+                'error' => 'User can\'t anwer more questions than there is given to him'
+            ]);
+        }
+
 
         $em = $this->getDoctrine()->getManager();
         $em->flush();
 
         $response = [
+            'status' => 'success',
             'can_register' => $game->getCanRegister(),
             'score' => $game->getScore()
         ];
@@ -90,27 +115,42 @@ class GameController extends Controller
         $gameSecret = $request->request->get('secret');
         $username = $request->request->get('username');
 
+        $doctrine = $this->getDoctrine();
 
-        $game = $this->getDoctrine()
+        $game = $doctrine
             ->getRepository('AppBundle:Game')->getGameByIdAndSecret($gameId, $gameSecret);
 
-        if ($game->getSecret() !== $gameSecret)
-            return $this->json(['error' => 'Secret does not match']);
+        if ($game->getSecret() !== $gameSecret){
+            return $this->json([
+                'status' => 'fail',
+                'error' => 'Secret does not match'
+            ]);
+        }
 
-        if(!$game->getCanRegister())
-            return $this->json(['error' => 'User can not save his username']);
+
+        if(!$game->getCanRegister()){
+            return $this->json([
+                'status' => 'fail',
+                'error' => 'User can not save his username'
+            ]);
+        }
+
 
 
         $game->setUsername($username);
+        $game->setCanRegister(false);
+
         $validator = $this->get('validator');
         $errors = $validator->validate($game);
 
-        if (count($errors) > 0)
-            throw $this->createNotFoundException('Data passed to query is incorect.');
+        if (count($errors) > 0){
+            return $this->json([
+                'status' => 'fail',
+                'error' => 'Data passed to query is incorect.'
+            ]);
+        }
 
-        $game->setCanRegister(false);
-
-        $em = $this->getDoctrine()->getManager();
+        $em = $doctrine->getManager();
         $em->flush();
 
 
