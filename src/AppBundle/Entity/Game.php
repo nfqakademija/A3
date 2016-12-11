@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Game
@@ -62,6 +63,38 @@ class Game
      * @ORM\Column(name="time_used", type="integer", nullable=true)
      */
     private $timeUsed;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="questions_given", type="integer")
+     * @Assert\NotBlank()
+     * @Assert\Type("integer")
+     */
+    private $questionsGiven;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="questions_answered", type="integer", nullable=true)
+     * @Assert\NotBlank()
+     * @Assert\Type("integer")
+     */
+    private $questionsAnswered;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="username", type="string", length=255, nullable=true)
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     * @Assert\Regex("/[a-zA-Z0-9]*$/")
+     * @Assert\Length(
+     *     min = 2,
+     *     max = 50
+     * )
+     */
+    private $username;
 
 
     /**
@@ -216,5 +249,77 @@ class Game
     public function getTimeUsed()
     {
         return $this->timeUsed;
+    }
+
+    /**
+     * Set questionsGiven
+     *
+     * @param integer $questionsGiven
+     *
+     * @return Game
+     */
+    public function setQuestionsGiven($questionsGiven)
+    {
+        $this->questionsGiven = $questionsGiven;
+
+        return $this;
+    }
+
+    /**
+     * Get questionsGiven
+     *
+     * @return integer
+     */
+    public function getQuestionsGiven()
+    {
+        return $this->questionsGiven;
+    }
+
+    /**
+     * Set questionsAnswered
+     *
+     * @param integer $questionsAnswered
+     *
+     * @return Game
+     */
+    public function setQuestionsAnswered($questionsAnswered)
+    {
+        $this->questionsAnswered = $questionsAnswered;
+
+        return $this;
+    }
+
+    /**
+     * Get questionsAnswered
+     *
+     * @return integer
+     */
+    public function getQuestionsAnswered()
+    {
+        return $this->questionsAnswered;
+    }
+
+    /**
+     * Set username
+     *
+     * @param string $username
+     *
+     * @return Game
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * Get username
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
     }
 }

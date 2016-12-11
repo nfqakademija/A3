@@ -38,8 +38,7 @@ Leaderboard.prototype.load = function () {
         var li = $('<li class="header">' +
             '<span class="leaderboard--place">Vieta</span>' +
             '<span class="leaderboard--username">Vardas</span>' +
-            '<span class="leaderboard--score">Atsakyta klausimu</span>' +
-            '<span class="leaderboard--time">Sugaišo laiko</span>' +
+            '<span class="leaderboard--score">Surinko taškų</span>' +
             '</li>');
         list.append(li);
         $.each(data.leaders,function(i,leader){
@@ -47,7 +46,6 @@ Leaderboard.prototype.load = function () {
                 '<span class="leaderboard--place">'+(i+1)+'</span>' +
                 '<span class="leaderboard--username">'+leader.username+'</span>' +
                 '<span class="leaderboard--score">'+leader.score+'</span>' +
-                '<span class="leaderboard--time">'+leader.time_spent+'</span>' +
                 '</li>');
             list.append(li);
         });

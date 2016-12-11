@@ -10560,8 +10560,7 @@ Leaderboard.prototype.load = function () {
         var li = $('<li class="header">' +
             '<span class="leaderboard--place">Vieta</span>' +
             '<span class="leaderboard--username">Vardas</span>' +
-            '<span class="leaderboard--score">Atsakyta klausimu</span>' +
-            '<span class="leaderboard--time">Sugaišo laiko</span>' +
+            '<span class="leaderboard--score">Surinko taškų</span>' +
             '</li>');
         list.append(li);
         $.each(data.leaders,function(i,leader){
@@ -10569,7 +10568,6 @@ Leaderboard.prototype.load = function () {
                 '<span class="leaderboard--place">'+(i+1)+'</span>' +
                 '<span class="leaderboard--username">'+leader.username+'</span>' +
                 '<span class="leaderboard--score">'+leader.score+'</span>' +
-                '<span class="leaderboard--time">'+leader.time_spent+'</span>' +
                 '</li>');
             list.append(li);
         });
@@ -10612,20 +10610,21 @@ LeaderRegistrator.prototype.hide = function () {
     this.$holder.slideUp();
 };
 
-LeaderRegistrator.prototype.init = function () {
+LeaderRegistrator.prototype.init = function (gameId, mainFact, questions) {
 
     var that = this;
 
     this.$form.on('submit', function (e) {
         e.preventDefault();
 
-        that.showLoader('Saugomas jūsų rezultatas. Prašome palaukti.');
+        that.Loader.show('Saugomas jūsų rezultatas. Prašome palaukti.');
 
-        that.API.saveLeader({
-            'username': $('#leader_name').val(),
-            'score': goodAnswersCount,
-            'time': timeSpent
-        }).done(function (data) {
+        that.API.saveGame(
+            $('#leader_name').val(),
+            gameId,
+            mainFact,
+            questions
+        ).done(function (data) {
 
             that.hide();
             that.dissable();
@@ -10808,10 +10807,10 @@ var Secret = function(rootFact, questions)
 
 Secret.prototype.getSecret = function()
 {
-    var stringIds = data.root.id + '';
+    var stringIds = this.rootFact.id + '';
 
-    for(var i = 0; i < data.questions.length; i++){
-        stringIds += data.questions[i].id;
+    for(var i = 0; i < this.questions.length; i++){
+        stringIds += this.questions[i].id;
     }
 
     return sha256(stringIds);
@@ -10830,10 +10829,34 @@ API.prototype.loadFactsDetailsDataById = function (factId) {
     return $.get('');
 };
 
-API.prototype.saveLeader = function (leader) {
-    var url = this.baseUrl + 'leaderboard/save';
-    return $.post(url, leader);
+API.prototype.saveGame = function (username, gameId, rootFact, questions) {
+
+    var secretMaker = new Secret(rootFact, questions);
+
+    var gameDetails = {};
+    gameDetails.id = gameId;
+    gameDetails.username = username;
+    gameDetails.secret = secretMaker.getSecret();
+
+    var url = this.baseUrl + 'game/save';
+    return $.post(url, gameDetails);
 };
+
+API.prototype.finishGame = function (gameId, questionsAnswered, timeUsed, questions, rootFact) {
+
+    var secretMaker = new Secret(rootFact, questions);
+
+    var gameDetails = {};
+    gameDetails.id = gameId;
+    gameDetails.questions_answered = questionsAnswered;
+    gameDetails.time_used = timeUsed;
+    gameDetails.secret = secretMaker.getSecret();
+
+    var url = this.baseUrl + 'game/finish';
+
+    return $.get(url, gameDetails);
+};
+
 
 API.prototype.isLeaderBetter = function (score, time) {
     var url = this.baseUrl + 'leaderboard/isbetter/' + score + '/' + time;
@@ -10855,9 +10878,9 @@ var Game = function (gameContainer) {
 
 
     this.ScreenPicker = new ScreenPicker([
-        new Screen('intro','.screen--start'),
-        new Screen('game','.screen--game'),
-        new Screen('end','.screen--end')
+        new Screen('intro', '.screen--start'),
+        new Screen('game', '.screen--game'),
+        new Screen('end', '.screen--end')
     ]);
 
 
@@ -10865,6 +10888,7 @@ var Game = function (gameContainer) {
     this.facts = [];
     this.factsCount = 0;
     this.mainFact = {};
+    this.gameId;
 
     this.isPlaying = false;
     this.qestionIndex = 0;
@@ -10922,8 +10946,6 @@ var Game = function (gameContainer) {
     var that = this;
 
 
-
-
     // Init click events
     // Start game event
     this.$startBtn.on('click', function (e) {
@@ -10931,7 +10953,6 @@ var Game = function (gameContainer) {
         // Init game with game type 1
         that.initGame(1);
     });
-
 
 
     this.$beforeBtn.on('click', function (e) {
@@ -10954,7 +10975,6 @@ var Game = function (gameContainer) {
     });
 
 
-
     this.$restartGame.on('click', function (e) {
         e.preventDefault();
         that.gameResultsMaker.resetResults();
@@ -10972,7 +10992,6 @@ var Game = function (gameContainer) {
     });
 
 
-
 };
 
 Game.prototype.initGame = function (gameType) {
@@ -10988,6 +11007,8 @@ Game.prototype.initGame = function (gameType) {
     this.API.loadGameData(gameType).done(function (data) {
         // Parse data
         // Set main fact
+        that.gameId = parseInt(data.game_id);
+
         that.mainFact = data.root;
         that.qestionIndex = 0;
         // Set questions array
@@ -10998,7 +11019,7 @@ Game.prototype.initGame = function (gameType) {
 
         that.resizer.setFontSize(that.$gameMainFact, that.mainFact.name);
 
-        that.maxTime = 590;
+        that.maxTime = parseInt(data.time);
         that.isPlaying = true;
 
         that.Loader.hide();
@@ -11039,7 +11060,6 @@ Game.prototype.setBeforeGameCounter = function () {
         }
     }, 2000);
 };
-
 
 
 Game.prototype.quitToMainScreen = function (wantsToQuit) {
@@ -11149,16 +11169,18 @@ Game.prototype.endGame = function () {
     clearInterval(this.timer);
 
     this.gameResultsMaker.generateResults(this.facts);
-    var goodAnswersCount = gameResultsMaker.getGoodAnswersCount();
+    var goodAnswersCount = this.gameResultsMaker.getGoodAnswersCount();
 
     var timeSpent = this.maxTime - this.timeLeft;
 
-    this.API.isLeaderBetter(goodAnswersCount, timeSpent).done(function (data) {
+    this.API.finishGame(that.gameId, goodAnswersCount, timeSpent, that.facts, that.mainFact).done(function (data) {
         that.Loader.hide();
 
-        if (data.is_better == true){
+        console.log(data);
 
-            that.LeaderRegistrator.init();
+        if (data.can_register === true) {
+
+            that.LeaderRegistrator.init(that.gameId, that.mainFact, that.facts);
 
         }
     }).fail(function (response) {

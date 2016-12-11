@@ -76,15 +76,14 @@ class LeaderboardController extends Controller
     {
 
         $leaders = $this->getDoctrine()
-            ->getRepository('AppBundle:Leader')->get(10);
+            ->getRepository('AppBundle:Game')->getBestScores(10);
 
         $leadersArray = [];
 
         foreach ($leaders as $leader) {
             $leaderItem = [
                 'username' => $leader->getUsername(),
-                'score' => $leader->getScore(),
-                'time_spent' => $leader->getTime()
+                'score' => $leader->getScore()
             ];
             $leadersArray[] = $leaderItem;
         }

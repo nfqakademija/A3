@@ -6,9 +6,9 @@ var Game = function (gameContainer) {
 
 
     this.ScreenPicker = new ScreenPicker([
-        new Screen('intro','.screen--start'),
-        new Screen('game','.screen--game'),
-        new Screen('end','.screen--end')
+        new Screen('intro', '.screen--start'),
+        new Screen('game', '.screen--game'),
+        new Screen('end', '.screen--end')
     ]);
 
 
@@ -16,6 +16,7 @@ var Game = function (gameContainer) {
     this.facts = [];
     this.factsCount = 0;
     this.mainFact = {};
+    this.gameId;
 
     this.isPlaying = false;
     this.qestionIndex = 0;
@@ -73,8 +74,6 @@ var Game = function (gameContainer) {
     var that = this;
 
 
-
-
     // Init click events
     // Start game event
     this.$startBtn.on('click', function (e) {
@@ -82,7 +81,6 @@ var Game = function (gameContainer) {
         // Init game with game type 1
         that.initGame(1);
     });
-
 
 
     this.$beforeBtn.on('click', function (e) {
@@ -105,7 +103,6 @@ var Game = function (gameContainer) {
     });
 
 
-
     this.$restartGame.on('click', function (e) {
         e.preventDefault();
         that.gameResultsMaker.resetResults();
@@ -123,7 +120,6 @@ var Game = function (gameContainer) {
     });
 
 
-
 };
 
 Game.prototype.initGame = function (gameType) {
@@ -139,6 +135,8 @@ Game.prototype.initGame = function (gameType) {
     this.API.loadGameData(gameType).done(function (data) {
         // Parse data
         // Set main fact
+        that.gameId = parseInt(data.game_id);
+
         that.mainFact = data.root;
         that.qestionIndex = 0;
         // Set questions array
@@ -149,7 +147,7 @@ Game.prototype.initGame = function (gameType) {
 
         that.resizer.setFontSize(that.$gameMainFact, that.mainFact.name);
 
-        that.maxTime = 590;
+        that.maxTime = parseInt(data.time);
         that.isPlaying = true;
 
         that.Loader.hide();
@@ -190,7 +188,6 @@ Game.prototype.setBeforeGameCounter = function () {
         }
     }, 2000);
 };
-
 
 
 Game.prototype.quitToMainScreen = function (wantsToQuit) {
@@ -300,16 +297,18 @@ Game.prototype.endGame = function () {
     clearInterval(this.timer);
 
     this.gameResultsMaker.generateResults(this.facts);
-    var goodAnswersCount = gameResultsMaker.getGoodAnswersCount();
+    var goodAnswersCount = this.gameResultsMaker.getGoodAnswersCount();
 
     var timeSpent = this.maxTime - this.timeLeft;
 
-    this.API.isLeaderBetter(goodAnswersCount, timeSpent).done(function (data) {
+    this.API.finishGame(that.gameId, goodAnswersCount, timeSpent, that.facts, that.mainFact).done(function (data) {
         that.Loader.hide();
 
-        if (data.is_better == true){
+        console.log(data);
 
-            that.LeaderRegistrator.init();
+        if (data.can_register === true) {
+
+            that.LeaderRegistrator.init(that.gameId, that.mainFact, that.facts);
 
         }
     }).fail(function (response) {

@@ -6,6 +6,7 @@ use AppBundle\Entity\Game;
 use AppBundle\Repository\FactRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Fact;
 use \DateTime;
@@ -37,6 +38,91 @@ class GameController extends Controller
         return $this->json($response);
     }
 
+    /**
+     * @Route("/game/finish", name="gameFinish")
+     */
+    public function finishGameAction(Request $request)
+    {
+        $gameId = $request->query->getInt('id');
+        $gameSecret = $request->query->get('secret');
+        $timeUsed = $request->query->getInt('time_used');
+        $questionsAnswered = $request->query->getInt('questions_answered');
+
+        $game = $this->getDoctrine()
+            ->getRepository('AppBundle:Game')->getGameByIdAndSecret($gameId, $gameSecret);
+
+        if ($game->getSecret() !== $gameSecret)
+            return $this->json(['error' => 'Secret does not match']);
+
+        $now = new DateTime();
+
+        /*if ($now->getTimestamp() - $game->getCreatedOn()->getTimestamp() > ($game->getTimeGiven() + 60))
+            return $this->json(['error' => 'The game in database is to old.']);*/
+
+
+        $game->setTimeUsed($timeUsed);
+        $game->setQuestionsAnswered($questionsAnswered);
+        $game->setScore($this->getGameScore($game));
+
+        $betterCount = $this->getDoctrine()
+            ->getRepository('AppBundle:Game')->getBetterCount($game);
+
+        $game->setCanRegister($betterCount<10);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->flush();
+
+        $response = [
+            'can_register' => $game->getCanRegister(),
+            'score' => $game->getScore()
+        ];
+
+        return $this->json($response);
+    }
+
+
+    /**
+     * @Route("/game/save", name="gameSave")
+     */
+    public function saveGameAction(Request $request)
+    {
+        $gameId = $request->request->getInt('id');
+        $gameSecret = $request->request->get('secret');
+        $username = $request->request->get('username');
+
+
+        $game = $this->getDoctrine()
+            ->getRepository('AppBundle:Game')->getGameByIdAndSecret($gameId, $gameSecret);
+
+        if ($game->getSecret() !== $gameSecret)
+            return $this->json(['error' => 'Secret does not match']);
+
+        if(!$game->getCanRegister())
+            return $this->json(['error' => 'User can not save his username']);
+
+
+        $game->setUsername($username);
+        $validator = $this->get('validator');
+        $errors = $validator->validate($game);
+
+        if (count($errors) > 0)
+            throw $this->createNotFoundException('Data passed to query is incorect.');
+
+        $game->setCanRegister(false);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->flush();
+
+
+        $response = [
+            'status' => 'success'
+        ];
+
+        return $this->json($response);
+    }
+
+
+
 
     /**
      * @param array $response
@@ -47,6 +133,7 @@ class GameController extends Controller
         $game = new Game();
         $game->setCreatedOn(new DateTime());
         $game->setTimeGiven($response['time']);
+        $game->setQuestionsGiven(count($response['questions']));
         $game->setSecret(
             hash('sha256', $this->getSecret($response))
         );
@@ -72,6 +159,18 @@ class GameController extends Controller
             $stringOfIds .= (string)$question['id'];
 
         return $stringOfIds;
+    }
+
+    /**
+     * @param Game $game
+     * @return int
+     */
+    private function getGameScore(Game $game):int
+    {
+        $questionsPart = $game->getQuestionsAnswered() / $game->getQuestionsGiven();
+        $timePart = 1 - ($game->getTimeUsed() / $game->getTimeGiven());
+
+        return $questionsPart * $timePart * 10000;
     }
 }
 
