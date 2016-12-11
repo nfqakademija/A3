@@ -28,7 +28,7 @@ class LeaderboardController extends Controller
 
         foreach ($leaders as $leader) {
             $leaderItem = [
-                'username' => $leader->getUsername(),
+                'username' => htmlspecialchars ($leader->getUsername()),
                 'score' => $leader->getScore()
             ];
             $leadersArray[] = $leaderItem;
