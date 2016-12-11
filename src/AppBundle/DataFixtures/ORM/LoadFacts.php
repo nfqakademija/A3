@@ -2,11 +2,9 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
-
 class LoadFacts
 {
-
-    public function parseFacts()
+    public function parseFacts():array
     {
         $parsed = [];
         $facts = file_get_contents(__DIR__ . '/facts.tsv');
@@ -19,5 +17,4 @@ class LoadFacts
 
         return $parsed;
     }
-
 }

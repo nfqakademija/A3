@@ -2,7 +2,6 @@
 
 namespace AppBundle\Repository;
 
-use AppBundle\AppBundle;
 use AppBundle\Entity\Fact;
 
 /**
@@ -15,7 +14,7 @@ use AppBundle\Entity\Fact;
  */
 class FactRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function findFactsForGame()
+    public function findFactsForGame():array
     {
         $em = $this->getEntityManager();
         $qb = $em->createQueryBuilder();

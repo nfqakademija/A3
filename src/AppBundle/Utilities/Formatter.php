@@ -6,7 +6,6 @@ use AppBundle\Entity\Fact;
 
 class Formatter
 {
-
     public static function formatDate(Fact $fact):string
     {
         $date = $fact->getYear();
@@ -22,5 +21,4 @@ class Formatter
         }
         return $date;
     }
-
 }

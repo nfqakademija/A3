@@ -5,16 +5,13 @@ namespace AppBundle\DataFixtures\ORM;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\Fact;
-use AppBundle\DataFixtures\ORM\LoadFacts;
 
 class LoadUserData implements FixtureInterface
 {
     public function load(ObjectManager $manager)
     {
-
         $call = new LoadFacts();
         $lines = $call->parseFacts();
-
 
         foreach ($lines as $entry) {
             $fact = new Fact();
@@ -29,8 +26,6 @@ class LoadUserData implements FixtureInterface
             $fact->setName($entry[3]);
             if (trim($entry[4]) != null) {
                 $fact->setDescription($entry[4]);
-
-
             }
 
             $manager->persist($fact);

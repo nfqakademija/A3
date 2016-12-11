@@ -102,7 +102,7 @@ class Game
      *
      * @return int
      */
-    public function getId()
+    public function getId():int
     {
         return $this->id;
     }
@@ -114,7 +114,7 @@ class Game
      *
      * @return Game
      */
-    public function setSecret($secret)
+    public function setSecret(string $secret):Game
     {
         $this->secret = $secret;
 
@@ -126,7 +126,7 @@ class Game
      *
      * @return string
      */
-    public function getSecret()
+    public function getSecret():string
     {
         return $this->secret;
     }
@@ -138,7 +138,7 @@ class Game
      *
      * @return Game
      */
-    public function setCreatedOn($createdOn)
+    public function setCreatedOn(\DateTime $createdOn):Game
     {
         $this->createdOn = $createdOn;
 
@@ -150,7 +150,7 @@ class Game
      *
      * @return \DateTime
      */
-    public function getCreatedOn()
+    public function getCreatedOn():\DateTime
     {
         return $this->createdOn;
     }
@@ -162,7 +162,7 @@ class Game
      *
      * @return Game
      */
-    public function setCanRegister($canRegister)
+    public function setCanRegister(bool $canRegister):Game
     {
         $this->canRegister = $canRegister;
 
@@ -174,7 +174,7 @@ class Game
      *
      * @return bool
      */
-    public function getCanRegister()
+    public function getCanRegister():bool
     {
         return $this->canRegister;
     }
@@ -186,7 +186,7 @@ class Game
      *
      * @return Game
      */
-    public function setScore($score)
+    public function setScore(int $score):Game
     {
         $this->score = $score;
 
@@ -198,7 +198,7 @@ class Game
      *
      * @return int
      */
-    public function getScore()
+    public function getScore():int
     {
         return $this->score;
     }
@@ -210,7 +210,7 @@ class Game
      *
      * @return Game
      */
-    public function setTimeGiven($timeGiven)
+    public function setTimeGiven(int $timeGiven):Game
     {
         $this->timeGiven = $timeGiven;
 
@@ -222,7 +222,7 @@ class Game
      *
      * @return integer
      */
-    public function getTimeGiven()
+    public function getTimeGiven():int
     {
         return $this->timeGiven;
     }
@@ -234,7 +234,7 @@ class Game
      *
      * @return Game
      */
-    public function setTimeUsed($timeUsed)
+    public function setTimeUsed(int $timeUsed):Game
     {
         $this->timeUsed = $timeUsed;
 
@@ -246,7 +246,7 @@ class Game
      *
      * @return integer
      */
-    public function getTimeUsed()
+    public function getTimeUsed():int
     {
         return $this->timeUsed;
     }
@@ -258,7 +258,7 @@ class Game
      *
      * @return Game
      */
-    public function setQuestionsGiven($questionsGiven)
+    public function setQuestionsGiven(int $questionsGiven):Game
     {
         $this->questionsGiven = $questionsGiven;
 
@@ -270,7 +270,7 @@ class Game
      *
      * @return integer
      */
-    public function getQuestionsGiven()
+    public function getQuestionsGiven():int
     {
         return $this->questionsGiven;
     }
@@ -282,7 +282,7 @@ class Game
      *
      * @return Game
      */
-    public function setQuestionsAnswered($questionsAnswered)
+    public function setQuestionsAnswered(int $questionsAnswered):Game
     {
         $this->questionsAnswered = $questionsAnswered;
 
@@ -294,7 +294,7 @@ class Game
      *
      * @return integer
      */
-    public function getQuestionsAnswered()
+    public function getQuestionsAnswered():int
     {
         return $this->questionsAnswered;
     }
@@ -306,7 +306,7 @@ class Game
      *
      * @return Game
      */
-    public function setUsername($username)
+    public function setUsername(string $username):Game
     {
         $this->username = $username;
 
@@ -318,7 +318,7 @@ class Game
      *
      * @return string
      */
-    public function getUsername()
+    public function getUsername():string
     {
         return $this->username;
     }

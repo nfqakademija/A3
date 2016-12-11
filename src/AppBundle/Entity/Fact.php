@@ -46,64 +46,64 @@ class Fact
     private $description;
 
     /**
-     * @param mixed $year
+     * @param int $year
      */
-    public function setYear($year)
+    public function setYear(int $year)
     {
         $this->year = $year;
     }
 
 
     /**
-     * @param mixed $month
+     * @param int $month
      */
-    public function setMonth($month)
+    public function setMonth(int $month)
     {
         $this->month = $month;
     }
 
     /**
-     * @param mixed $day
+     * @param int $day
      */
-    public function setDay($day)
+    public function setDay(int $day)
     {
         $this->day = $day;
     }
 
     /**
-     * @param mixed $name
+     * @param string $name
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
 
     /**
-     * @param mixed $description
+     * @param string $description
      */
-    public function setDescription($description)
+    public function setDescription(string $description)
     {
         $this->description = $description;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getId()
+    public function getId():int
     {
         return $this->id;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getYear()
+    public function getYear():int
     {
         return $this->year;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getMonth()
     {
@@ -111,7 +111,7 @@ class Fact
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getDay()
     {
@@ -119,17 +119,17 @@ class Fact
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getName()
+    public function getName():string
     {
         return $this->name;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getDescription()
+    public function getDescription():string
     {
         return $this->description;
     }
