@@ -135,7 +135,7 @@ class GameController extends Controller
         $game->setTimeGiven($response['time']);
         $game->setQuestionsGiven(count($response['questions']));
         $game->setSecret(
-            hash('sha256', $this->getSecret($response))
+             $this->getSecret($response)
         );
 
         $em = $this->getDoctrine()->getManager();
@@ -158,7 +158,7 @@ class GameController extends Controller
         foreach ($response["questions"] as $question)
             $stringOfIds .= (string)$question['id'];
 
-        return $stringOfIds;
+        return  hash('sha256', $stringOfIds);
     }
 
     /**
@@ -168,9 +168,9 @@ class GameController extends Controller
     private function getGameScore(Game $game):int
     {
         $questionsPart = $game->getQuestionsAnswered() / $game->getQuestionsGiven();
-        $timePart = 1 - ($game->getTimeUsed() / $game->getTimeGiven());
+        $timePart = (1 - ($game->getTimeUsed() / $game->getTimeGiven())) * 0.1;
 
-        return $questionsPart * $timePart * 10000;
+        return ($questionsPart + $timePart ) * 10000;
     }
 }
 
