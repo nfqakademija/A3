@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Fact;
 use \DateTime;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class GameController extends Controller
 {
