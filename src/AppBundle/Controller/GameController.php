@@ -120,9 +120,9 @@ class GameController extends Controller
         $username = $request->request->get('username');
 
         $doctrine = $this->getDoctrine();
+        $em = $doctrine->getManager();
 
-        $game = $doctrine
-            ->getRepository('AppBundle:Game')->getGameByIdAndSecret($gameId, $gameSecret);
+        $game = $em->find('AppBundle:Game', $gameId);
 
         if ($game->getSecret() !== $gameSecret){
             return $this->json([
@@ -154,7 +154,7 @@ class GameController extends Controller
             ]);
         }
 
-        $em = $doctrine->getManager();
+
         $em->flush();
 
 
@@ -172,7 +172,8 @@ class GameController extends Controller
     private function getGameScore(Game $game):int
     {
         $questionsPart = $game->getQuestionsAnswered() / $game->getQuestionsGiven();
-        $timePart = (1 - ($game->getTimeUsed() / $game->getTimeGiven())) * $this->container->getParameter('timecoficient');
+        $timePart = $this->container->getParameter('timecoficient') *
+            (1 - ($game->getTimeUsed() / $game->getTimeGiven()));
 
         return ($questionsPart + $timePart ) * 10000;
     }
