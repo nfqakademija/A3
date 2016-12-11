@@ -2,17 +2,18 @@
 namespace AppBundle\Game;
 
 use AppBundle\Entity\Fact;
+use AppBundle\Utilities\Formatter;
 
 class FactsFetcher
 {
-    //get root element
+
     private $facts;
     private $numberOfQuestions;
     private $time;
     private $beginPercentage;
     private $endPercentage;
 
-    public function __construct($numberOfQuestions, $time, $beginPercentage, $endPercentage)
+    public function __construct(int $numberOfQuestions, int $time, int $beginPercentage, int $endPercentage)
     {
         $this->numberOfQuestions = $numberOfQuestions;
         $this->time = $time;
@@ -20,13 +21,12 @@ class FactsFetcher
         $this->endPercentage = $endPercentage;
     }
 
-    public function fetchFacts($facts)
+    public function fetchFacts(array $facts):array
     {
         $this->facts = $facts;
         $count = count($this->facts);  //counts facts
-        $root_from = intval($count / 100 * $this->beginPercentage);  //disables first 10% for root
-        $root_to = intval($count / 100 * $this->endPercentage);   //disables last 10% for root
-        $root = mt_rand($root_from, $root_to);  // gets root element
+
+        $root = $this->getRootIndex($count);
 
         $q_count_half = $this->numberOfQuestions / 2;
 
@@ -63,26 +63,12 @@ class FactsFetcher
         }
 
 
-        $q_array_before = array();
-
-        $output = array_slice($this->facts, 0, $root);
-
-        for ($i = 0; $i < $q_before; $i++) {
-            shuffle($output);
-            $t = array_pop($output);
-            $q_array_before[] = $t;
-        }
-
-        $q_array_after = array();
-        $output = array_slice($this->facts, $root + 1);
-
-        for ($i = 0; $i < $q_after; $i++) {
-            shuffle($output);
-            $q_array_after[] = array_pop($output);
-        }
+        $beforeRoot = array_slice($this->facts, 0, $root);
+        $q_array_before = $this->getRandomQuestions($beforeRoot, $q_before);
+        $afterRoot = array_slice($this->facts, $root + 1);
+        $q_array_after = $this->getRandomQuestions($afterRoot, $q_after);
 
         $response_root = $this->factsResponse($this->facts[$root]);
-
         $response_questions = array_merge(
             $this->formatFacts($q_array_before, true),
             $this->formatFacts($q_array_after, false)
@@ -90,11 +76,14 @@ class FactsFetcher
 
         shuffle($response_questions);
 
-        return ['response_question' => $response_questions, 'response_root' => $response_root,
-            'response_time' => $this->time];
+        return [
+            'response_question' => $response_questions,
+            'response_root' => $response_root,
+            'response_time' => $this->time
+        ];
     }
 
-    private function formatFacts($q_array, $isBefore)
+    private function formatFacts(array $q_array, bool $isBefore):array
     {
         $response_questions = [];
         foreach ($q_array as $before_fact) {
@@ -106,31 +95,31 @@ class FactsFetcher
         return $response_questions;
     }
 
-    private function factsResponse(Fact $fact)
+    private function factsResponse(Fact $fact):array
     {
         $response = array(
             "id" => $fact->getId(),
             "name" => $fact->getName(),
-            "date" => $this->formatDate($fact),
+            "date" => Formatter::formatDate($fact),
         );
 
         return $response;
     }
 
-    private function formatDate($fact)
+    private function getRootIndex(int $count):int
     {
-        $date = $fact->getYear();
-        $month = $fact->getMonth();
-        $day = $fact->getDay();
-
-        if ($month == null) {
-            $date = $date . " m.";
-        } elseif ($day == null) {
-            $date = $date . " m. " . $month . " mėn. ";
-        } else {
-            $date = $date . " m. " . $month . " mėn. " . $day . " d.";
-        }
-        return $date;
+        $root_from = intval($count / 100 * $this->beginPercentage);
+        $root_to = intval($count / 100 * $this->endPercentage);
+        return mt_rand($root_from, $root_to);
     }
 
+    private function getRandomQuestions(array $output, int $questions):array
+    {
+        $q_array = [];
+        for ($i = 0; $i < $questions; $i++) {
+            shuffle($output);
+            $q_array[] = array_pop($output);
+        }
+        return $q_array;
+    }
 }
