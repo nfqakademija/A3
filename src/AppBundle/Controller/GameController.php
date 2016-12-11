@@ -117,7 +117,7 @@ class GameController extends Controller
 
         $gameId = $request->request->getInt('id');
         $gameSecret = $request->request->get('secret');
-        $username = htmlspecialchars ($request->request->get('username'));
+        $username = $request->request->get('username');
 
         $doctrine = $this->getDoctrine();
 
