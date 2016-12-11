@@ -53,6 +53,10 @@ body {
     .main-wrapper {
       top: 0;
       bottom: 0; } }
+  @media (min-width: 320px) and (max-width: 768px) {
+    .main-wrapper {
+      top: 0;
+      bottom: 0; } }
   @media (min-width: 768px) {
     .main-wrapper {
       top: 40px;

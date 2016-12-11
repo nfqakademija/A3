@@ -62,6 +62,11 @@ body {
     bottom: 0;
   }
 
+  @media #{$small}{
+    top:0;
+    bottom: 0;
+  }
+
   @media #{$mediumUp}{
     top: 40px;
     bottom: 40px;
